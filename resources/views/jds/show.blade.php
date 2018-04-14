@@ -3,7 +3,7 @@
 
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+    <link rel="stylesheet" href="{{asset('libs/bootstrap-table-master/dist/bootstrap-table.min.css')}}">
     <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
       <div class="form-group">
         <label for="inputEmail3" class="col-sm-2 control-label">京东产品ID</label>
@@ -48,9 +48,9 @@
 
 @section('js')
     <!-- Latest compiled and minified JavaScript -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <script src="{{asset('libs/bootstrap-table-master/dist/bootstrap-table.min.js')}}"></script>
     <!-- Latest compiled and minified Locales -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="{{asset('libs/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js')}}"></script>
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script type="text/javascript">
         $('#sub').click(function(){
