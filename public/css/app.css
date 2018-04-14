@@ -8380,6 +8380,11 @@ body {
   margin-bottom: 60px;
 }
 
+.navbar-brand {
+  font-size: 25px;
+  font-weight: 600;
+}
+
 .jd-page > .container {
   margin-bottom: 60px;
 }
