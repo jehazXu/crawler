@@ -27,7 +27,7 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="sub" class="btn btn-default">抓取数据</button>
+          <button type="submit" id="sub" class="btn btn-success">抓取评论数据</button>
         </div>
       </div>
     </div>
@@ -64,8 +64,8 @@
 
             $('body').loading({
                 loadingWidth:240,
-                title:'请稍等!',
-                name:'test',
+                title:'获取中...请稍等!',
+                name:'loadfram',
                 discription:'抓取中...',
                 direction:'row',
                 type:'pic',
@@ -81,14 +81,14 @@
             $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 var obj = JSON.parse(data);
                 if(obj){
-                    removeLoading('test');
+                    removeLoading('loadfram');
                     $('#comment-list').html('');
                     for(var i=0;i<obj.length;i++){
                         $('#comment-list').append("<tr><td>"+obj[i]['nickname']+"</td><td>"+obj[i]['creationTime']+"</td></tr>");
                     }
                 }
                 else{
-                    removeLoading('test');
+                    removeLoading('loadfram');
                     alert('没有数据');
                 }
             })
