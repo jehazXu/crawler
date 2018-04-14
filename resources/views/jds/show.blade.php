@@ -27,7 +27,7 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="sub" class="btn btn-success">抓取评论数据</button>
+          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 抓取评论数据</button>
         </div>
       </div>
     </div>
