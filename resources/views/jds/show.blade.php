@@ -4,7 +4,7 @@
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
-    <div class="form-horizontal" action="{{route('jd.crawler')}}" method="post">
+    <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
       <div class="form-group">
         <label for="inputEmail3" class="col-sm-2 control-label">京东产品ID</label>
         <div class="col-sm-10">

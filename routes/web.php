@@ -11,4 +11,4 @@
 |
 */
 Route::get('/', 'PagesController@root')->name('root');
-route::get('jd/crawler','JdController@show')->name('jd.crawler');
+route::get('jd','JdController@show')->name('jd');
