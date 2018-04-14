@@ -29,7 +29,9 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
-    padding-bottom:60px;
+}
+.jd-page>.container{
+    margin-bottom: 60px;
 }
 
 .footer {
@@ -43,7 +45,6 @@ body {
     .container {
         padding-right: 15px;
         padding-left: 15px;
-
         p {
             margin: 19px 0;
             color: #c1c1c1;
