@@ -19,6 +19,13 @@
         </div>
       </div>
       <div class="form-group">
+        <label for="inputPassword3" class="col-sm-2 control-label">评论排序规则</label>
+        <div class="col-sm-10">
+          <input id="r1" type="radio" value='5' name="sorttype" checked="true" >京东默认推荐排序</input>
+          <input id="r2" type="radio" value='6' name="sorttype">时间排序</input>
+        </div>
+      </div>
+      <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" id="sub" class="btn btn-default">抓取数据</button>
         </div>
@@ -71,7 +78,7 @@
                 loadingBg:'rgba(20,125,148,0.8)',
                 loadingMaskBg:'rgba(123,122,222,0.2)'
             });
-            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'page':$('#page').val()},function(data){
+            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 var obj = JSON.parse(data);
                 if(obj){
                     removeLoading('test');
