@@ -19,23 +19,6 @@ class JdController extends Controller
         $data=mb_substr($content,25,count($content)-3,'UTF-8');
         $jsondata=json_decode($data, true);
         $comments=$jsondata['comments'];
-        foreach ($comments as $key => $value) {
-            echo '</br>用户名：'.$value['nickname'].'</br>';
-            echo '评价时间：'.$value['creationTime'].'</br></br>';
-            echo "--------------------------------------".'</br>';
-        }
-        // var_dump(json_decode($data, true)['comments']);
-        exit;
-
+        return json_encode($comments);
     }
-
-    // function curl_get($url, $gzip=false){
-    // 　$curl = curl_init($url);
-    // 　curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    // 　curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-    // 　if($gzip) curl_setopt($curl, CURLOPT_ENCODING, "gzip"); // 关键在这里
-    // 　$content = curl_exec($curl);
-    // 　curl_close($curl);
-    // 　return $content;
-    // }
 }

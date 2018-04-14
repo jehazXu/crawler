@@ -3,28 +3,57 @@
 
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
-    <h1>京东评价抓取</h1>
-    <form action="{{route('jd.crawler')}}" method="post">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+    <div class="form-horizontal" action="{{route('jd.crawler')}}" method="post">
       <div class="form-group">
-        <label for="exampleInputEmail1">京东产品ID</label>
-        <input type="number" class="form-control" name="pid" placeholder="输入产品ID">
+        <label for="inputEmail3" class="col-sm-2 control-label">京东产品ID</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control" id="pid" name="pid" placeholder="输入京东产品ID" value="10561776205">
+          <span style="color: #88888888">示例：网址蓝色数字</span><img style="margin-top: 5px;opacity: 0.68;" src="{{asset('images/jd_url_pid.png')}}">
+        </div>
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">页码</label>
-        <input type="number" class="form-control" name="page" placeholder="页码" value="1">
+        <label for="inputPassword3" class="col-sm-2 control-label">页码</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control" id="page" name="page" placeholder="页码" value="1">
+        </div>
       </div>
-      <button type="submit" class="btn btn-default">提交</button>
-    </form>
-    <!-- <div id='comment-list'>
-        <input type="text" id="url" name="url" placeholder="输入网址" style="width: 200px;" />
-      <input type="button" id="submit2" name="submit" value="提交"/>
-    </div> -->
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" id="sub" class="btn btn-default">抓取数据</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading">评论数据</div>
+      <!-- Table -->
+      <table data-toggle="table">
+            <thead>
+                <tr class="">
+                    <th>用户名</th>
+                    <th>评论时间</th>
+                </tr>
+            </thead>
+            <tbody id="comment-list">
+                <!-- <tr>
+                    <td>1</td>
+                    <td>Item 1</td>
+                    <td>$1</td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
 @stop
 
 @section('js')
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+    <!-- Latest compiled and minified Locales -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
-    <!-- <script type="text/javascript">
-        $('#submit2').click(function(){
+    <script type="text/javascript">
+        $('#sub').click(function(){
 
             $('body').loading({
                 loadingWidth:240,
@@ -42,15 +71,20 @@
                 loadingBg:'rgba(20,125,148,0.8)',
                 loadingMaskBg:'rgba(123,122,222,0.2)'
             });
-            // $.post('{{route('jd.crawler')}}',{'url':$('#url').val()},function(data){
-            //     var obj = data.parseJSON();
-            //     if(obj.res){
-            //         removeLoading('test');
-            //         for(var i=0;i<obj['url'].length;i++){
-            //             $('#comment-list').append("<b>"+obj['url'][i]+"</b>");
-            //         }
-            //     }
-            // })
+            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'page':$('#page').val()},function(data){
+                var obj = JSON.parse(data);
+                if(obj){
+                    removeLoading('test');
+                    $('#comment-list').html('');
+                    for(var i=0;i<obj.length;i++){
+                        $('#comment-list').append("<tr><td>"+obj[i]['nickname']+"</td><td>"+obj[i]['creationTime']+"</td></tr>");
+                    }
+                }
+                else{
+                    removeLoading('test');
+                    alert('没有数据');
+                }
+            })
         })
-    </script> -->
+    </script>
 @stop
