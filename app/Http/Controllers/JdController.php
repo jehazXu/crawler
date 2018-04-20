@@ -15,11 +15,13 @@ class JdController extends Controller
         $sortType=$request->sorttype;
         $pid=$request->pid;
         $nickname=$request->nickname;
-        dump($request->all());exit;
         $array=array();
         $arraydata=self::getAllComments($pid,$sortType,1,$array);
-        $data=self::searchInComments($arraydata,'nickname',$request->nickname);
-        return json_encode($data);
+        if(!empty($nickname)){
+            $data=self::searchInComments($arraydata,'nickname',$nickname);
+            return json_encode($data);
+        }
+        return json_encode($arraydata);
     }
 
     static function getAllComments($pid,$type,$page,&$array)
@@ -27,7 +29,7 @@ class JdController extends Controller
         $arraydata=self::getIndexComments($pid,$type,$page);
         if(count($arraydata)>=10){
             $page++;
-            // 防止浏览器报429 too many request错误，设置每取20条数据暂停5秒
+            //防止浏览器报429 too many request错误，设置每取20条数据暂停5秒
             if($page%20==0)
             {
                 sleep(5);
@@ -60,11 +62,10 @@ class JdController extends Controller
     static function searchInComments($array,$key,$value)
     {
         $res=array();
-        dump($value.'+');
-        $va=substr($value, 0,1).'***'.substr($value,strlen($value)-1,1);
-        dump($va.'~');
+        //正则判断获取中英文混合式的字符个数而非字符串占位数
+        $len=count(preg_match_all('/./us', $value, $match)[0]);
+        $va=mb_substr($value, 0,1,'utf-8').'***'.mb_substr($value,$len-1,1,'utf-8');
         foreach($array as $keyp=>$valuep){
-            var_dump($valuep[$key]);echo '--';
             if($valuep[$key]==$va){
                 $re[$key]=$valuep[$key];
                 $re['creationTime']=$valuep['creationTime'];

@@ -8,14 +8,14 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">京东产品ID</label>
         <div class="col-sm-10">
-          <input type="number" class="form-control" id="pid" name="pid" placeholder="输入京东产品ID" value="10561776205">
+          <input type="number" class="form-control" id="pid" name="pid" placeholder="输入京东产品ID" value="10561776205"/>
           <span style="color: #88888888">示例：网址蓝色数字</span><img style="margin-top: 5px;opacity: 0.68;" src="{{asset('images/jd_url_pid.png')}}">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">用户名</label>
+        <label class="col-sm-2 control-label">搜索用户名</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="nickname" name="nickname" placeholder="用户完整名" />
+          <input type="text" class="form-control" id="nickname" placeholder="请输入用户完整名"/>
         </div>
       </div>
       <div class="form-group">
@@ -60,7 +60,6 @@
     <script src="{{asset('libs/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js')}}"></script>
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script type="text/javascript">
-        var add=0;
         $('#sub').click(function(){
             $('body').loading({
                 loadingWidth:240,
@@ -78,10 +77,8 @@
                 loadingBg:'rgba(20,125,148,0.8)',
                 loadingMaskBg:'rgba(123,122,222,0.2)'
             });
-            if(add==0){
+            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 $('#comment-list').html('');
-            }
-            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 var obj = JSON.parse(data);
                 if(obj){
                     removeLoading('loadfram');
