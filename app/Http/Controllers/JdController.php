@@ -14,9 +14,15 @@ class JdController extends Controller
     function crawler(Request $request){
         $sortType=$request->sorttype;
         $pid=$request->pid;
+        $page=$request->page;
         $nickname=$request->nickname;
         $array=array();
-        $arraydata=self::getAllComments($pid,$sortType,1,$array);
+        if($page==0){
+            $arraydata=self::getAllComments($pid,$sortType,0,$array);
+        }
+        else{
+            $arraydata=self::getIndexComments($pid,$sortType,$page-1);
+        }
         if(!empty($nickname)){
             $data=self::searchInComments($arraydata,'nickname',$nickname);
             return json_encode($data);
@@ -50,6 +56,7 @@ class JdController extends Controller
     {
         // score表示评论的类型（好评为3 中评为2 差评为1 全部评论为0 追评为5）
         // pageSize是每页最多的评论数（最大为10）
+        //京东折叠的评论链接 https://sclub.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=26430850300&score=0&sortType=5&page=0&pageSize=10&_=1524212109913
         $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=0";
         $cnt = file_get_contents($url);
         $content= mb_convert_encoding($cnt ,"UTF-8","GBK");
@@ -66,7 +73,9 @@ class JdController extends Controller
         $len=count(preg_match_all('/./us', $value, $match)[0]);
         $va=mb_substr($value, 0,1,'utf-8').'***'.mb_substr($value,$len-1,1,'utf-8');
         foreach($array as $keyp=>$valuep){
-            if($valuep[$key]==$va){
+            $len2=count(preg_match_all('/./us', $valuep[$key], $match2)[0]);
+            $va2=mb_substr($valuep[$key], 0,1,'utf-8').'***'.mb_substr($valuep[$key],$len2-1,1,'utf-8');
+            if($va2==$va){
                 $re[$key]=$valuep[$key];
                 $re['creationTime']=$valuep['creationTime'];
                 array_push($res, $re);

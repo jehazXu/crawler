@@ -15,7 +15,14 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">搜索用户名</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="nickname" placeholder="请输入用户完整名"/>
+          <input type="text" class="form-control" id="nickname" placeholder="请输入用户名（留空时搜索所有用户）"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">从第几页搜索</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control" style="margin-bottom: 5px;" id="page" value="1" />
+          <span style="color: #55555555;">默认为 1，只搜索第一页，0-表示从所有评论中搜索</span>
         </div>
       </div>
       <div class="form-group">
@@ -27,7 +34,7 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 从评论中搜索</button>
+          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 从评论中抓取</button>
         </div>
       </div>
     </div>
@@ -77,10 +84,11 @@
                 loadingBg:'rgba(20,125,148,0.8)',
                 loadingMaskBg:'rgba(123,122,222,0.2)'
             });
-            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
-                $('#comment-list').html('');
+            $('#comment-list').html('');
+            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 var obj = JSON.parse(data);
                 if(obj){
+                    console.log(obj.length);
                     removeLoading('loadfram');
                     $('#comment-list').html('');
                     for(var i=0;i<obj.length;i++){
