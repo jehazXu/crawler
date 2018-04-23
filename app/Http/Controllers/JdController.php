@@ -60,7 +60,7 @@ class JdController extends Controller
         $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=0";
         $cnt = file_get_contents($url);
         $content= mb_convert_encoding($cnt ,"UTF-8","GBK");
-        $data=mb_substr($content,25,count($content)-3,'UTF-8');
+        $data=mb_substr($content,25,-2,'UTF-8');
         $arraydata=json_decode($data, true);
         $array=$arraydata['comments'];
         return $array;
