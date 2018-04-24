@@ -17,6 +17,9 @@
         </div>
       </div>
     </div>
+    <div class="col-sm-offset-1 col-sm-10" id="count">
+
+    </div>
 @stop
 
 @section('js')
@@ -29,7 +32,7 @@
         $('#sub').click(function(){
             $('body').loading({
                 loadingWidth:240,
-                title:'数据获取中...请稍等!',
+                title:'获取中,请稍等...!',
                 name:'loadfram',
                 discription:'数据获取中...',
                 direction:'row',
@@ -57,12 +60,11 @@
                 return false;
             }
             $.post('{{route('api.tmall.crawler')}}',{'id':id},function(data){
+                removeLoading('loadfram');
                 if(data){
-                    removeLoading('loadfram');
-                    alert("收藏数："+data);
+                    $("#count").html("<h3>收藏数："+data+"</h3>")
                 }
                 else{
-                    removeLoading('loadfram');
                     alert('没有数据');
                 }
             });
