@@ -3,7 +3,6 @@
 
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
-    <link rel="stylesheet" href="{{asset('libs/bootstrap-table-master/dist/bootstrap-table.min.css')}}">
     <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
       <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
@@ -23,10 +22,6 @@
 @stop
 
 @section('js')
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="{{asset('libs/bootstrap-table-master/dist/bootstrap-table.min.js')}}"></script>
-    <!-- Latest compiled and minified Locales -->
-    <script src="{{asset('libs/bootstrap-table-master/dist/locale/bootstrap-table-zh-CN.min.js')}}"></script>
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script type="text/javascript">
         $('#sub').click(function(){
