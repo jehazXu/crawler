@@ -8,7 +8,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址" value="" />
+          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址"/>
         </div>
       </div>
       <div class="form-group">
@@ -59,7 +59,7 @@
             $.post('{{route('api.tmall.crawler')}}',{'id':id},function(data){
                 if(data){
                     removeLoading('loadfram');
-                    alert(data);
+                    alert("收藏数："+data);
                 }
                 else{
                     removeLoading('loadfram');
