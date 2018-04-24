@@ -15,3 +15,4 @@ use Illuminate\Http\Request;
 
 
 Route::post('jd/crawler','JdController@crawler')->name('api.jd.crawler');
+Route::post('tmall/crawler','TmallController@crawler')->name('api.tmall.crawler');

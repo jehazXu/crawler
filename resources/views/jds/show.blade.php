@@ -87,7 +87,7 @@
             $('#comment-list').html('');
             $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
                 var obj = JSON.parse(data);
-                if(obj){
+                if(obj && obj.length>0){
                     console.log(obj.length);
                     removeLoading('loadfram');
                     $('#comment-list').html('');
