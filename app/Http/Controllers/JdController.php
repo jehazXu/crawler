@@ -70,11 +70,9 @@ class JdController extends Controller
     {
         $res=array();
         //正则判断获取中英文混合式的字符个数而非字符串占位数
-        $len=count(preg_match_all('/./us', $value, $match)[0]);
-        $va=mb_substr($value, 0,1,'utf-8').'***'.mb_substr($value,$len-1,1,'utf-8');
+        $va=mb_substr($value, 0,1,'utf-8').'***'.mb_substr($value,-1,1,'utf-8');
         foreach($array as $keyp=>$valuep){
-            $len2=count(preg_match_all('/./us', $valuep[$key], $match2)[0]);
-            $va2=mb_substr($valuep[$key], 0,1,'utf-8').'***'.mb_substr($valuep[$key],$len2-1,1,'utf-8');
+            $va2=mb_substr($valuep[$key], 0,1,'utf-8').'***'.mb_substr($valuep[$key],-1,1,'utf-8');
             if($va2==$va){
                 $re[$key]=$valuep[$key];
                 $re['creationTime']=$valuep['creationTime'];
