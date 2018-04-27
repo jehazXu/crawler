@@ -8385,8 +8385,8 @@ body {
   font-weight: 600;
 }
 
-.jd-page > .container {
-  margin-bottom: 60px;
+#app > .container {
+  margin-bottom: 70px;
 }
 
 .footer {
