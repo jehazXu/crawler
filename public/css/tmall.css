@@ -1,0 +1,14 @@
+.idTabs>ul>li{margin:0;display:flex;}
+.idTabs>ul>li>button{background:#fff;border-radius: 0;box-shadow:0 0 1px 0 #bbb;}
+.idTabs>ul>li>a{text-decoration: none;width:80%;border-radius:0;color:#000;box-shadow:0 0 1px 0 #bbb;background:#fff;}
+.idTabs>ul>li>a.selected,.idTabs ul>li>a.selected~button{background:#def0d8;}
+.idTabs>ul>li>a:not(.selected):hover{color:#444;background:rgba(220,220,220,.8);}
+.tab-item{display:none;background:#fff;box-shadow:0 0 1px 0 #bbb;}
+
+.pages{padding:0;}
+#prev,#next{display:inline-block;width:10%;height:39px;line-height:39px;border:1px solid #ddd;text-align:center;}
+#next{float:right;}
+.pages>div{position: absolute;margin:0;padding:0;width:74%;display:inline-block;overflow:hidden;}
+.pagination{position:relative;margin:0;display:flex;}
+.pagination>li{width:40px;}
+.pagination>li>a{width:100%;text-align:center;z-index: 0;padding:6px 12px;}

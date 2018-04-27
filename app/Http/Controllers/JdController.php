@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Redis;
 use QL\QueryList;
-
+use DB;
 use Illuminate\Http\Request;
 class JdController extends Controller
 {
     public function show(){
+            // DB::table('collect_counts')->insert(
+            //     ['tproduct_id' => '1', 'collect_count' => 222,'count_date'=>date("Y-m-d")]
+            // );
         return view('jds.show');
     }
 

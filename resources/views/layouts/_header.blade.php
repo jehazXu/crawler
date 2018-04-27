@@ -20,7 +20,7 @@
             <!-- Left Side Of Navbar -->
             <ul class="nav navbar-nav">
                 <li class="{{ active_class(if_route('jd')) }}"><a href="{{route('jd')}}">京东评论</a></li>
-                <li class="{{ active_class(if_route('tmall')) }}"><a href="{{route('tmall')}}">天猫</a></li>
+                <li class="{{ active_class(if_route('tmallproduct.index')) }}"><a href="{{route('tmallproduct.index')}}">天猫</a></li>
             </ul>
 
             <!-- Right Side Of Navbar -->

@@ -13,3 +13,5 @@
 Route::get('/', 'PagesController@root')->name('root');
 route::get('jd','JdController@show')->name('jd');
 route::get('tmall','TmallController@show')->name('tmall');
+
+Route::resource('tmallproduct', 'TmallProductController');
