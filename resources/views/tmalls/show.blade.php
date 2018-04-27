@@ -26,7 +26,7 @@
                 <ul class="nav nav-pills nav-stacked">
                     @foreach($products as $product)
                     <li>
-                        <a onclick='showChart({{$product->id}},"{{$product->product}}")' class="item selected">{{$product->product}}</a>
+                        <a onclick='showChart({{$product->id}},"{{$product->product}}")' class="item">{{$product->product}}</a>
                         <button type="button" class="btn text-success btn-xs">编辑</button>
                         <button type="button" class="btn text-danger btn-xs">删除</button>
                     </li>
@@ -39,6 +39,7 @@
             <div id="linechart" style="width:100%;height: 300px;"></div>
             <div id="barchart" style="width:100%;height: 300px;"></div>
         </div>
+
     </div>
 @stop
 
@@ -48,6 +49,9 @@
     <script src="{{asset('libs/echarts/echarts.js')}}"></script>
     <script type="text/javascript">
         function showChart(id,pname){
+            $('.item').removeClass('selected');
+            $('.item').eq(id-1).addClass('selected');
+
             option = {
                 title: {
                     text: pname+' 收藏数量（单位:个）'
@@ -115,8 +119,8 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#idTabs .nav li:first>a').addClass('selected');
             $(".nav").idTabs();
-            $(".tab-item").show();
 
             var dis=$('#idTabs').offset().top;
             $(window).scroll(function() {
