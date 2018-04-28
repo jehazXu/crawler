@@ -247,15 +247,21 @@
         $('#sub').click(function(){
             var url = $('#url').val();
             var re = /&id=\d*&/;
+            var re2 = /\?id=\d*&/;
             var re_num=/\d+/;
             try{
                 var id=url.match(re)[0].match(re_num);
-                if(!id) throw '获取产品id失败或网址输入错误！';
             }
-            catch(err)
-            {
-                alert(err);
-                return false;
+            catch(err){}
+            if(!id){
+                try{
+                    var gid=url.match(re2);
+                    var id=gid[0].match(re_num);
+                }
+                catch(err2){
+                    alert(err2);
+                    return false;
+                }
             }
             layer.prompt({title: '请输入显示在列表中的名称', formType: 2}, function(text, index){
                 layer.close(index);
