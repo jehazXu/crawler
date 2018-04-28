@@ -42,7 +42,7 @@ class TmallCollectCount extends Command
        foreach ($products as $product) {
            $collectnum = CollectCount::collectCount($product->skuid);
             DB::table('collect_counts')->insert(
-                ['tproduct_id' => $product->id, 'collect_count' => $collectnum,'count_date'=>date("Y/m/d")]
+                ['tproduct_id' => $product->id, 'collect_count' => $collectnum,'count_date'=>date("Y-m-d H:i:s")]
             );
        }
     }

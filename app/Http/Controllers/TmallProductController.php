@@ -54,7 +54,7 @@ class TmallProductController extends Controller
             $ccount=new CollectCount;
             $ccount->tproduct_id=$id;
             $ccount->collect_count=$collectnum;
-            $ccount->count_date=date("Y/m/d");
+            $ccount->count_date=date("Y-m-d H:i:s");
             $ccount->save();
             return 'success';
        }
