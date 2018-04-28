@@ -26,9 +26,9 @@
                 <ul class="nav nav-pills nav-stacked">
                     @foreach($products as $product)
                     <li>
-                        <a id="item{{$product->id}}" onclick='showChart("{{$product->id}}","{{$product->product}}")' class="item">{{$product->product}}</a>
-                        <button type="button" class="btn text-success btn-xs">清空</button>
-                        <button type="button" class="btn text-danger btn-xs">删除</button>
+                        <a id="{{$product->id}}" onclick='showChart("{{$product->id}}","{{$product->product}}")' class="item">{{$product->product}}</a>
+                        <button type="button" class="btn text-success btn-xs"  onclick="clecounts('{{$product->id}}')">清空</button>
+                        <button type="button" class="btn text-danger btn-xs" onclick="destroy('{{$product->id}}')">删除</button>
                     </li>
                     @endforeach
                 </ul>
@@ -44,16 +44,15 @@
 @stop
 
 @section('js')
-    <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script src="{{asset('js/jquery.idTabs.js')}}"></script>
     <script src="{{asset('libs/echarts/echarts.js')}}"></script>
     <script type="text/javascript">
-        
-    </script>
-    <script type="text/javascript">
+        @if (session()->has('success'))
+          layer.msg("{{session()->get('success')}}");
+        @endif
         function showChart(id,pname){
             $('.item').removeClass('selected');
-            $('#item'+id).addClass('selected');
+            $('#'+id).addClass('selected');
 
             var datacounts = new Array();
             var datadates = new Array();
@@ -170,25 +169,48 @@
                 }
             });
         });
-
+        function clecounts(id){
+            layer.confirm('确定要清空所有采集的数据吗', {
+              btn: ['否','确定'] //按钮
+            }, function(index){
+              layer.close(index);
+            }, function(){
+                $.post('{{url("tmallproduct")}}/'+id,{'id':id,'_method':'PATCH','_token':"{{csrf_token()}}"},function(res){
+                    if(res=='success'){
+                        layer.msg('清空成功');
+                        window.location.href='{{route("tmallproduct.index")}}';
+                    }
+                    else{
+                        layer.alert('清空失败', {
+                          skin: 'layui-layer-molv' //样式类名
+                          ,closeBtn: 0
+                        });
+                    }
+                });
+            });
+        }
+        function destroy(id){
+            layer.confirm('确定要删除吗', {
+              btn: ['否','确定'] //按钮
+            }, function(index){
+              layer.close(index);
+            }, function(){
+                $.post('{{url("tmallproduct")}}/'+id,{'id':id,'_method':'DELETE','_token':"{{csrf_token()}}"},function(res){
+                    if(res=='success'){
+                        layer.msg('删除成功');
+                        window.location.href='{{route("tmallproduct.index")}}';
+                    }
+                    else{
+                        layer.alert('删除失败', {
+                          skin: 'layui-layer-molv' //样式类名
+                          ,closeBtn: 0
+                        });
+                    }
+                });
+            });
+        }
 
         $('#sub').click(function(){
-            $('body').loading({
-                loadingWidth:240,
-                title:'获取中,请稍等...!',
-                name:'loadfram',
-                discription:'数据获取中...',
-                direction:'row',
-                type:'pic',
-                originBg:'#71EA71',
-                originDivWidth:60,
-                originDivHeight:60,
-                originWidth:6,
-                originHeight:6,
-                smallLoading:false,
-                loadingBg:'rgba(20,125,148,0.8)',
-                loadingMaskBg:'rgba(123,122,222,0.2)'
-            });
             var url = $('#url').val();
             var re = /&id=\d*&/;
             var re_num=/\d+/;
@@ -199,18 +221,29 @@
             catch(err)
             {
                 alert(err);
-                removeLoading('loadfram');
                 return false;
             }
-            $.post('{{route('api.tmall.crawler')}}',{'id':id},function(data){
-                removeLoading('loadfram');
-                if(data){
-                    $("#count").html("<h3>收藏数："+data+"</h3>")
-                }
-                else{
-                    alert('没有数据');
-                }
+            layer.prompt({title: '请输入显示在列表中的名称', formType: 2}, function(text, index){
+                layer.close(index);
+                $.post('{{route('tmallproduct.store')}}',{'skuid':id[0],'product':text,'_token':"{{csrf_token()}}"},function(res){
+                    if(res=='exist'){
+                        layer.alert('该产品已存在', {
+                          skin: 'layui-layer-molv' //样式类名
+                          ,closeBtn: 0
+                        });
+                    }
+                    else if(res=='success'){
+                        window.location.href='{{route("tmallproduct.index")}}';
+                    }
+                    else{
+                        layer.alert('添加失败', {
+                          skin: 'layui-layer-molv' //样式类名
+                          ,closeBtn: 0
+                        });
+                    }
+                });
             });
+
         });
     </script>
 @stop

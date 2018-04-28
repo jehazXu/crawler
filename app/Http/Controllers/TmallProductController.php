@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\TmallProduct;
+use App\Model\Tmallproduct;
+use App\Model\Collectcount;
 use Illuminate\Http\Request;
+use DB;
 
 class TmallProductController extends Controller
 {
@@ -14,7 +16,7 @@ class TmallProductController extends Controller
      */
     public function index()
     {
-        $products=TmallProduct::with('collectCounts')->paginate(10);
+        $products=Tmallproduct::with('collectCounts')->paginate(10);
         return view('tmalls.show',compact('products'));
     }
 
@@ -36,7 +38,25 @@ class TmallProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $isexist= Tmallproduct::where('skuid',$request->skuid)->first();
+       if($isexist)
+       {
+            return "exist";
+       }
+       $id = DB::table('tmall_products')->insertGetId(['product' => $request->product, 'skuid' => $request->skuid]);
+       if($id){
+            $collectnum=CollectCount::collectCount($request->skuid);
+            $ccount=new CollectCount;
+            $ccount->tproduct_id=$id;
+            $ccount->collect_count=$collectnum;
+            $ccount->count_date=date("Y/m/d");
+            $ccount->save();
+            return 'success';
+       }
+       else{
+            return 'fail';
+       }
+
     }
 
     /**
@@ -45,7 +65,7 @@ class TmallProductController extends Controller
      * @param  \App\Model\TmallProduct  $tmallProduct
      * @return \Illuminate\Http\Response
      */
-    public function show(TmallProduct $tmallProduct)
+    public function show(Tmallproduct $tmallproduct)
     {
 
     }
@@ -56,7 +76,7 @@ class TmallProductController extends Controller
      * @param  \App\Model\TmallProduct  $tmallProduct
      * @return \Illuminate\Http\Response
      */
-    public function edit(TmallProduct $tmallProduct)
+    public function edit(Tmallproduct $tmallproduct)
     {
         //
     }
@@ -68,9 +88,12 @@ class TmallProductController extends Controller
      * @param  \App\Model\TmallProduct  $tmallProduct
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TmallProduct $tmallProduct)
+    public function update(Request $request, Tmallproduct $tmallproduct)
     {
-        //
+        foreach ($tmallproduct->collectCounts as $collectcount) {
+            $collectcount->delete();
+        }
+        return "success";
     }
 
     /**
@@ -79,8 +102,12 @@ class TmallProductController extends Controller
      * @param  \App\Model\TmallProduct  $tmallProduct
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TmallProduct $tmallProduct)
+    public function destroy(TmallProduct $tmallproduct)
     {
-        //
+        $res=$tmallproduct->delete();
+        if($res){
+            return "success";
+        }
+        return "fail";
     }
 }
