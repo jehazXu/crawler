@@ -43,7 +43,12 @@ class TmallProductController extends Controller
        {
             return "exist";
        }
-       $id = DB::table('tmall_products')->insertGetId(['product' => $request->product, 'skuid' => $request->skuid]);
+       try{
+            $id = DB::table('tmall_products')->insertGetId(['product' => $request->product, 'skuid' => $request->skuid]);
+       }
+       catch(Exception $e){
+            return $e->getMessage();
+       }
        if($id){
             $collectnum=CollectCount::collectCount($request->skuid);
             $ccount=new CollectCount;
