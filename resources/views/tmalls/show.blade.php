@@ -26,8 +26,8 @@
                 <ul class="nav nav-pills nav-stacked">
                     @foreach($products as $product)
                     <li>
-                        <a onclick='showChart({{$product->id}},"{{$product->product}}")' class="item">{{$product->product}}</a>
-                        <button type="button" class="btn text-success btn-xs">编辑</button>
+                        <a id="item{{$product->id}}" onclick='showChart("{{$product->id}}","{{$product->product}}")' class="item">{{$product->product}}</a>
+                        <button type="button" class="btn text-success btn-xs">清空</button>
                         <button type="button" class="btn text-danger btn-xs">删除</button>
                     </li>
                     @endforeach
@@ -48,14 +48,52 @@
     <script src="{{asset('js/jquery.idTabs.js')}}"></script>
     <script src="{{asset('libs/echarts/echarts.js')}}"></script>
     <script type="text/javascript">
+        
+    </script>
+    <script type="text/javascript">
         function showChart(id,pname){
             $('.item').removeClass('selected');
-            $('.item').eq(id-1).addClass('selected');
+            $('#item'+id).addClass('selected');
 
-            option = {
-                title: {
-                    text: pname+' 收藏数量（单位:个）'
+            var datacounts = new Array();
+            var datadates = new Array();
+            var datanull = new Array();
+            @foreach($products as $product)
+                if({{$product->id}}== id ){
+                    @foreach($product->collectCounts as $ccount)
+                        datacounts.push("{{$ccount->collect_count}}");
+                        datadates.push("{{$ccount->count_date}}");
+                        datanull.push(0);
+                    @endforeach
+                }
+            @endforeach
+
+            var optionline = {
+                title: [{
+                    left: 'center',
+                    text: pname+' 收藏数折线图(单位:个)'
+                }],
+                tooltip: {
+                    trigger: 'axis'
                 },
+                xAxis: [{
+                    data: datadates
+                }],
+                yAxis: [{
+                    splitLine: {show: true}
+                }],
+                series: [{
+                    type: 'line',
+                    showSymbol: true,
+                    data: datacounts
+                }]
+            };
+
+            var optionbar = {
+                title: [{
+                    left: 'center',
+                    text: pname+' 收藏数柱状图(单位:个)'
+                }],
                 tooltip : {
                     trigger: 'axis',
                     axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -75,7 +113,7 @@
                 xAxis: {
                     type : 'category',
                     splitLine: {show:false},
-                    data : ['总费用','房租','水电费','交通费','伙食费','日用品数']
+                    data : datadates
                 },
                 yAxis: {
                     type : 'value'
@@ -95,10 +133,10 @@
                                 color: 'rgba(0,0,0,0)'
                             }
                         },
-                        data: [0, 0, 0, 0, 0, 0]
+                        data: datanull
                     },
                     {
-                        name: '生活费',
+                        name: '收藏数',
                         type: 'bar',
                         stack: '总量',
                         label: {
@@ -107,17 +145,17 @@
                                 position: 'inside'
                             }
                         },
-                        data:[2900, 1200, 300, 200, 900, 300]
+                        data:datacounts
                     }
                 ]
             };
-            var barchart=echarts.init(document.getElementById("barchart"));
             var linechart=echarts.init(document.getElementById("linechart"));
-            linechart.setOption(option);
-            barchart.setOption(option);
+            var barchart=echarts.init(document.getElementById("barchart"));
+            linechart.setOption(optionline);
+            barchart.setOption(optionbar);
         }
-    </script>
-    <script type="text/javascript">
+        showChart("{{$products->first()->id}}","{{$products->first()->product}}");
+
         $(document).ready(function(){
             $('#idTabs .nav li:first>a').addClass('selected');
             $(".nav").idTabs();
@@ -132,6 +170,7 @@
                 }
             });
         });
+
 
         $('#sub').click(function(){
             $('body').loading({

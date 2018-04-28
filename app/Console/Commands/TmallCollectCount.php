@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 use DB;
 use Illuminate\Console\Command;
+use App\Model\CollectCount;
 
 class TmallCollectCount extends Command
 {
@@ -39,9 +40,9 @@ class TmallCollectCount extends Command
     {
        $products= DB::table('tmall_products')->get();
        foreach ($products as $product) {
-           $collectnum = \App\Http\Controllers\TmallController::collectCount($product->skuid);
+           $collectnum = CollectCount::collectCount($product->skuid);
             DB::table('collect_counts')->insert(
-                ['tproduct_id' => $product->id, 'collect_count' => $collectnum,'count_date'=>date("Y-m-d")]
+                ['tproduct_id' => $product->id, 'collect_count' => $collectnum,'count_date'=>date("Y/m/d")]
             );
        }
     }
