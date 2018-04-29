@@ -17,6 +17,7 @@ class CreateTmallProductsTable extends Migration
             $table->increments('id');
             $table->string('product')->comment('天猫产品名');
             $table->string('skuid')->comment('天猫产品id');
+            $table->text('url')->comment('天猫产品链接');
             $table->timestamps();
         });
     }

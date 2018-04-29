@@ -16,7 +16,7 @@ class TmallProductController extends Controller
      */
     public function index()
     {
-        $products=Tmallproduct::with('collectCounts')->paginate(10);
+        $products=Tmallproduct::with('collectCounts')->paginate(8);
         return view('tmalls.show',compact('products'));
     }
 
@@ -44,7 +44,7 @@ class TmallProductController extends Controller
             return "exist";
        }
        try{
-            $id = DB::table('tmall_products')->insertGetId(['product' => $request->product, 'skuid' => $request->skuid]);
+            $id = DB::table('tmall_products')->insertGetId(['product' => $request->product, 'skuid' => $request->skuid,'url' => $request->url]);
        }
        catch(Exception $e){
             return $e->getMessage();

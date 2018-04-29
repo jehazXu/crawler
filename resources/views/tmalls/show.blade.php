@@ -29,6 +29,7 @@
                         <a id="{{$product->id}}" onclick='showChart("{{$product->id}}","{{$product->product}}")' class="item">{{$product->product}}</a>
                         <button type="button" class="btn text-success btn-xs"  onclick="clecounts('{{$product->id}}')">清空</button>
                         <button type="button" class="btn text-danger btn-xs" onclick="destroy('{{$product->id}}')">删除</button>
+                        <button onclick="window.open('{{$product->url}}')"  class="btn text-primary btn-xs" >查看</button>
                     </li>
                     @endforeach
                 </ul>
@@ -265,7 +266,7 @@
             }
             layer.prompt({title: '请输入显示在列表中的名称', formType: 2}, function(text, index){
                 layer.close(index);
-                $.post('{{route('tmallproduct.store')}}',{'skuid':id[0],'product':text,'_token':"{{csrf_token()}}"},function(res){
+                $.post('{{route('tmallproduct.store')}}',{'skuid':id[0],'url':url,'product':text,'_token':"{{csrf_token()}}"},function(res){
                     if(res=='exist'){
                         layer.alert('该产品已存在', {
                           skin: 'layui-layer-molv' //样式类名
