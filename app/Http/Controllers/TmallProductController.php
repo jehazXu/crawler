@@ -16,7 +16,7 @@ class TmallProductController extends Controller
      */
     public function index()
     {
-        $products=Tmallproduct::with('collectCounts')->paginate(8);
+        $products=Tmallproduct::with('collectCounts')->paginate(10);
         return view('tmalls.show',compact('products'));
     }
 
