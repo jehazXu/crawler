@@ -8412,3 +8412,54 @@ body {
   color: inherit;
 }
 
+/*tmall page*/
+
+.idTabs ul {
+  background: #fff;
+  -webkit-box-shadow: 0 0 1px 0 #bbb;
+          box-shadow: 0 0 1px 0 #bbb;
+  padding: 10px 0px 20px 0px;
+}
+
+.idTabs ul li {
+  margin: 0 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 14px;
+}
+
+.idTabs ul li button {
+  border-radius: 0;
+  background: #fff;
+  padding: 1px 3px;
+}
+
+.idTabs ul li a {
+  text-decoration: none;
+  line-height: 1.5em;
+  color: #818689;
+  width: 100%;
+  border-radius: 0;
+  background: #fff;
+  padding: 10px 6px;
+}
+
+.idTabs ul li a:hover {
+  color: #444;
+  background: rgba(243, 246, 248, 0.8);
+  cursor: pointer;
+}
+
+.idTabs ul li a.selected,
+.idTabs ul li a.selected ~ button {
+  border-bottom: 2px solid #00b5ad;
+}
+
+.tab-item {
+  display: none;
+  background: #fff;
+  -webkit-box-shadow: 0 0 1px 0 #bbb;
+          box-shadow: 0 0 1px 0 #bbb;
+}
+

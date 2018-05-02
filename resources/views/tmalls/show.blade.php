@@ -3,7 +3,6 @@
 
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
-    <link rel="stylesheet" href="{{asset('css/tmall.css')}}">
     <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
       <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
