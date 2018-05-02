@@ -12,4 +12,4 @@
 */
 Route::get('/', 'PagesController@root')->name('root');
 route::get('jd','JdController@show')->name('jd');
-Route::resource('tmallproduct', 'TmallProductController');
+Route::resource('tmallproduct', 'TmallProductController')->only(['index','store','update','destroy']);

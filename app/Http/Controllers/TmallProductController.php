@@ -20,15 +20,6 @@ class TmallProductController extends Controller
         return view('tmalls.show',compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -62,28 +53,6 @@ class TmallProductController extends Controller
             return 'fail';
        }
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Model\TmallProduct  $tmallProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Tmallproduct $tmallproduct)
-    {
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Model\TmallProduct  $tmallProduct
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tmallproduct $tmallproduct)
-    {
-        //
     }
 
     /**

@@ -8,7 +8,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址"/>
+          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址【每天 1:00 和 13:00 从天猫获取一次数据】"/>
         </div>
       </div>
       <div class="form-group">
@@ -48,9 +48,6 @@
     <script src="{{asset('js/jquery.idTabs.js')}}"></script>
     <script src="{{asset('libs/echarts/echarts.js')}}"></script>
     <script type="text/javascript">
-        @if (session()->has('success'))
-          layer.msg("{{session()->get('success')}}");
-        @endif
         function showChart(id,pname){
             $('.item').removeClass('selected');
             $('#'+id).addClass('selected');
@@ -274,6 +271,7 @@
                         });
                     }
                     else if(res=='success'){
+                        layer.msg('已添加到监控列表');
                         window.location.href='{{route("tmallproduct.index")}}';
                     }
                     else if(res=='fail'){
