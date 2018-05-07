@@ -52,6 +52,7 @@
             $('#'+id).addClass('selected');
 
             var datacounts = new Array();
+            var datacountsadd = new Array();
             var datadates = new Array();
             var datanull = new Array();
             @foreach($products as $product)
@@ -63,11 +64,16 @@
                     @endforeach
                 }
             @endforeach
+            datacountsadd.push(0);
+            for(let i=1;i<=datacounts.length;i++)
+            {
+                datacountsadd.push(datacounts[i]-datacounts[i-1]);
+            }
 
             var optionline = {
                 title: [{
                     left: 'center',
-                    text: pname+' 收藏数折线图(单位:个)'
+                    text: ' 收藏数每日增量折线图(单位:个)'
                 }],
                 tooltip: {
                     trigger: 'axis'
@@ -81,7 +87,7 @@
                 series: [{
                     type: 'line',
                     showSymbol: true,
-                    data: datacounts
+                    data: datacountsadd
                 }],
                 // dataZoom: [{
                 //     type: 'inside',
@@ -105,7 +111,7 @@
             var optionbar = {
                 title: [{
                     left: 'center',
-                    text: pname+' 收藏数柱状图(单位:个)'
+                    text: ' 收藏数每日增量柱状图(单位:个)'
                 }],
                 tooltip : {
                     trigger: 'axis',
@@ -149,7 +155,7 @@
                         data: datanull
                     },
                     {
-                        name: '收藏数',
+                        name: '收藏增长数',
                         type: 'bar',
                         stack: '总量',
                         label: {
@@ -158,7 +164,7 @@
                                 position: 'inside'
                             }
                         },
-                        data:datacounts
+                        data:datacountsadd
                     }
                 ],
                 dataZoom: [{
