@@ -34,7 +34,7 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 从评论中抓取</button>
+          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 显示的评论</button>
           <button type="submit2" id="sub2" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 折叠的评论</button>
         </div>
         </div>
