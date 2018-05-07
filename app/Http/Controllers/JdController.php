@@ -61,7 +61,7 @@ class JdController extends Controller
         // score表示评论的类型（好评为3 中评为2 差评为1 全部评论为0 追评为5）
         // pageSize是每页最多的评论数（最大为10）
         if($isfolder){
-            $url="https:sclub.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&_=1524212109913"
+            $url="https:sclub.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&_=1524212109913";
         }else{
             $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=0";
         }
