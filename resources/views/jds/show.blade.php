@@ -35,8 +35,9 @@
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 从评论中抓取</button>
+          <button type="submit2" id="sub2" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 折叠的评论</button>
         </div>
-      </div>
+        </div>
     </div>
     <div class="panel panel-info">
       <!-- Default panel contents -->
@@ -68,6 +69,14 @@
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script type="text/javascript">
         $('#sub').click(function(){
+            postToBack(0);
+
+        });
+        $('#sub2').click(function(){
+            postToBack(1);
+
+        });
+        function postToBack(isfolder){
             $('body').loading({
                 loadingWidth:240,
                 title:'获取中...请稍等!',
@@ -85,7 +94,7 @@
                 loadingMaskBg:'rgba(123,122,222,0.2)'
             });
             $('#comment-list').html('');
-            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val()},function(data){
+            $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val(),'isfolder':isfolder},function(data){
                 var obj = JSON.parse(data);
                 if(obj && obj.length>0){
                     console.log(obj.length);
@@ -100,6 +109,6 @@
                     alert('没有数据');
                 }
             })
-        })
+        }
     </script>
 @stop
