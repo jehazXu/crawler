@@ -48,6 +48,7 @@
                 <tr class="">
                     <th>用户名</th>
                     <th>评论时间</th>
+                    <th>评论内容</th>
                 </tr>
             </thead>
             <tbody id="comment-list">
@@ -95,17 +96,16 @@
             });
             $('#comment-list').html('');
             $.post('{{route('api.jd.crawler')}}',{'pid':$('#pid').val(),'nickname':$('#nickname').val(),'page':$('#page').val(),'sorttype':$("input[name='sorttype']:checked").val(),'isfolder':isfolder},function(data){
+                removeLoading('loadfram');
                 var obj = JSON.parse(data);
                 if(obj && obj.length>0){
                     console.log(obj.length);
-                    removeLoading('loadfram');
                     $('#comment-list').html('');
                     for(var i=0;i<obj.length;i++){
-                        $('#comment-list').append("<tr><td>"+obj[i]['nickname']+"</td><td>"+obj[i]['creationTime']+"</td></tr>");
+                        $('#comment-list').append("<tr><td>"+obj[i]['nickname']+"</td><td>"+obj[i]['creationTime']+"</td><td>"+obj[i]['content']+"</td></tr>");
                     }
                 }
                 else{
-                    removeLoading('loadfram');
                     alert('没有数据');
                 }
             })

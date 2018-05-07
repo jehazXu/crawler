@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 class JdController extends Controller
 {
     public function show(){
-            // DB::table('collect_counts')->insert(
-            //     ['tproduct_id' => '1', 'collect_count' => 222,'count_date'=>date("Y-m-d")]
-            // );
         return view('jds.show');
     }
 
@@ -40,12 +37,12 @@ class JdController extends Controller
         if(count($arraydata)>=10){
             $page++;
             //防止浏览器报429 too many request错误，设置每取20条数据暂停5秒
-            if($page%20==0)
+            if($page%40==0)
             {
                 sleep(5);
             }
             //递归下一页
-            self::getAllComments($pid,$type,$page,$array);
+            self::getAllComments($pid,$type,$isfolder,$page,$array);
         }
         if(count($array) && count($arraydata)){
             $array=array_merge($arraydata,$array);
@@ -61,16 +58,29 @@ class JdController extends Controller
         // score表示评论的类型（好评为3 中评为2 差评为1 全部评论为0 追评为5）
         // pageSize是每页最多的评论数（最大为10）
         if($isfolder){
-            $url="https:sclub.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&_=1524212109913";
+            $url="https://club.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&_=1524212109913";
+            $content=self::curlGet($url);
+            $data=mb_substr($content,14,-2,'UTF-8');
         }else{
-            $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=0";
+            $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=1";
+            $content=self::curlGet($url);
+            $data=mb_substr($content,25,-2,'UTF-8');
         }
-        $cnt = file_get_contents($url);
-        $content= mb_convert_encoding($cnt ,"UTF-8","GBK");
-        $data=mb_substr($content,25,-2,'UTF-8');
+        //$cnt = file_get_contents($url);
         $arraydata=json_decode($data, true);
         $array=$arraydata['comments'];
         return $array;
+    }
+
+    static function curlGet($url){
+        $ch = curl_init();
+        $timeout = 5;
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $cnt = curl_exec($ch);
+        curl_close($ch);
+        return mb_convert_encoding($cnt ,"UTF-8","GBK");
     }
 
     static function searchInComments($array,$key,$value)
@@ -82,6 +92,7 @@ class JdController extends Controller
             if($va2==$va){
                 $re[$key]=$valuep[$key];
                 $re['creationTime']=$valuep['creationTime'];
+                $re['content']=$valuep['content'];
                 array_push($res, $re);
             }
         }
