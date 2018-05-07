@@ -73,7 +73,7 @@
             var optionline = {
                 title: [{
                     left: 'center',
-                    text: ' 收藏数每日增量折线图(单位:个)'
+                    text: ' 收藏数增量折线图(单位:个)'
                 }],
                 tooltip: {
                     trigger: 'axis'
@@ -84,9 +84,24 @@
                 yAxis: [{
                     splitLine: {show: true}
                 }],
+
                 series: [{
+                    name:'增长数',
                     type: 'line',
+                    // symbol:'circle',
                     showSymbol: true,
+                    data: datacountsadd,
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                },
+                {
+                    name:'收藏数',
+                    type: 'bar',
+                    color:'#83bff6',
+                    showSymbol: false,
                     data: datacountsadd
                 }],
                 // dataZoom: [{
@@ -111,7 +126,7 @@
             var optionbar = {
                 title: [{
                     left: 'center',
-                    text: ' 收藏数每日增量柱状图(单位:个)'
+                    text: ' 收藏数柱状图(单位:个)'
                 }],
                 tooltip : {
                     trigger: 'axis',
@@ -155,7 +170,7 @@
                         data: datanull
                     },
                     {
-                        name: '收藏增长数',
+                        name: '收藏数',
                         type: 'bar',
                         stack: '总量',
                         label: {
@@ -164,7 +179,7 @@
                                 position: 'inside'
                             }
                         },
-                        data:datacountsadd
+                        data:datacounts
                     }
                 ],
                 dataZoom: [{
@@ -249,8 +264,8 @@
 
         $('#sub').click(function(){
             var url = $('#url').val();
-            var re = /&id=\d*&/;
-            var re2 = /\?id=\d*&/;
+            var re = /&id=\d*/;
+            var re2 = /\?id=\d*/;
             var re_num=/\d+/;
             try{
                 var id=url.match(re)[0].match(re_num);
