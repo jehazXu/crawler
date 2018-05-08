@@ -98,7 +98,7 @@
                     }
                 },
                 {
-                    name:'收藏数',
+                    name:'增长数',
                     type: 'bar',
                     color:'#83bff6',
                     showSymbol: false,
