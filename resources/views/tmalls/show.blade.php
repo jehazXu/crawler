@@ -51,10 +51,10 @@
             $('.item').removeClass('selected');
             $('#'+id).addClass('selected');
 
-            var datacounts = new Array();
-            var datacountsadd = new Array();
-            var datadates = new Array();
-            var datanull = new Array();
+            var datacounts = new Array();//收藏数
+            var datacountsadd = new Array();//增长数
+            var datadates = new Array();//日期
+            var datanull = new Array();//图表需要，全为0
             @foreach($products as $product)
                 if({{$product->id}}== id ){
                     @foreach($product->collectCounts as $ccount)
@@ -104,23 +104,6 @@
                     showSymbol: false,
                     data: datacountsadd
                 }],
-                // dataZoom: [{
-                //     type: 'inside',
-                //     start: 0,
-                //     end: 100
-                // }, {
-                //     start: 0,
-                //     end: 10,
-                //     handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-                //     handleSize: '80%',
-                //     handleStyle: {
-                //         color: '#fff',
-                //         shadowBlur: 3,
-                //         shadowColor: 'rgba(0, 0, 0, 0.6)',
-                //         shadowOffsetX: 2,
-                //         shadowOffsetY: 2
-                //     }
-                // }]
             };
 
             var optionbar = {
@@ -205,6 +188,7 @@
             linechart.setOption(optionline);
             barchart.setOption(optionbar);
         }
+        //页面加载时首先加载监控列表第一条的图表
         showChart("{{$products->first()->id}}","{{$products->first()->product}}");
 
         $(document).ready(function(){
@@ -223,7 +207,7 @@
         });
         function clecounts(id){
             layer.confirm('确定要清空所有采集的数据吗', {
-              btn: ['否','确定'] //按钮
+              btn: ['否','确定']
             }, function(index){
               layer.close(index);
             }, function(){
@@ -243,7 +227,7 @@
         }
         function destroy(id){
             layer.confirm('确定要删除吗', {
-              btn: ['否','确定'] //按钮
+              btn: ['否','确定']
             }, function(index){
               layer.close(index);
             }, function(){
