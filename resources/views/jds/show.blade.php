@@ -8,8 +8,8 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">京东产品ID</label>
         <div class="col-sm-10">
-          <input type="number" class="form-control" id="pid" name="pid" placeholder="输入京东产品ID" value="10098049369"/>
-          <span style="color: #88888888">示例：网址蓝色数字</span><img style="    margin-top: 5px;margin-bottom: -5px;opacity: 0.68;" src="{{asset('images/jd_url_pid.png')}}">
+          <input type="number"  id="pid" name="pid" class="form-control" style="margin-bottom: 5px;" placeholder="输入京东产品ID" value="10098049369"/>
+          <span style="color: #88888888">示例：网址绿色数字 https://item.jd.com/<span style="background: #4AAB6E;color: white">27220648798</span>.html</span>
         </div>
       </div>
       <div class="form-group">
