@@ -24,12 +24,11 @@ class ShoutaoController extends Controller
     public function getRanking(Request $request)
     {
         $ranking=Shoutaoranking::ranking($request->title,$request->key,1,0);
-        if($ranking==-1)
+        if($ranking['msg']=='fail')
         {
             return 'fail';
         }
         else{
-            Log::info('ranking:'.$ranking);
             return $ranking;
         }
     }

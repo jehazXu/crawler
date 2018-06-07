@@ -48,9 +48,12 @@
             {{$shoutaos->links()}}
         </div>
         <div class="col-sm-6" >
-            <div class="alert alert-success" role="alert" style="height: 200px">
+            <div class="alert alert-success" role="alert" style="height: 250px">
                 <div id="gettitle" style="margin: 5px">
 
+                </div>
+                <div>
+                    <img id="logo" src="" style="height: 100px;width: 100px;margin: 10px;">
                 </div>
                 <div  id="ranking" style="margin:15px 5px;color: red">
 
@@ -106,34 +109,50 @@
 
         $('#add').click(function(){
             var title = $('#title').val();
-            var key = $('#key').val();
-            // var nick = $('#nick').val();
-            $.post('{{route('shoutao.store')}}',{'title':title,'key':key,'_token':"{{csrf_token()}}"},function(res){
-                if(res=='success'){
-                    layer.msg('已添加到列表');
-                    window.location.replace('{{route("shoutao.index")}}');
-                }
-                else if(res=='fail'){
-                    layer.alert('添加失败', {
-                        skin: 'layui-layer-molv' //样式类名
-                        ,closeBtn: 0
-                    });
-                }
-                else{
-                    layer.alert(res, {
-                        skin: 'layui-layer-molv' //样式类名
-                        ,closeBtn: 0
-                    });
-                }
-            });
-
+            // var key = $('#key').val();
+            var nick = $('#nick').val();
+            if(title=='' || key=='')
+            {
+                layer.alert('请输入标题和关键词', {
+                    skin: 'layui-layer-molv' //样式类名
+                    ,closeBtn: 0
+                });
+            }else{
+                $.post('{{route('shoutao.store')}}',{'title':title,'key':key,'_token':"{{csrf_token()}}"},function(res){
+                    if(res=='success'){
+                        layer.msg('已添加到列表');
+                        window.location.replace('{{route("shoutao.index")}}');
+                    }
+                    else if(res=='fail'){
+                        layer.alert('添加失败', {
+                            skin: 'layui-layer-molv' //样式类名
+                            ,closeBtn: 0
+                        });
+                    }
+                    else{
+                        layer.alert(res, {
+                            skin: 'layui-layer-molv' //样式类名
+                            ,closeBtn: 0
+                        });
+                    }
+                });
+            }
         });
 
         $('#sub').click(function(){
             var title = $('#title').val();
             // var nick = $('#nick').val();
             var key = $('#key').val();
-            search(title,key);
+            if(title=='' || key=='')
+            {
+                layer.alert('请输入标题和关键词', {
+                    skin: 'layui-layer-molv' //样式类名
+                    ,closeBtn: 0
+                });
+            }
+            else{
+                search(title,key);
+            }
 
         });
 
@@ -163,9 +182,11 @@
                     });
                 }
                 else{
-                    $('#gettitle').text(title);
-                    let page= Math.ceil(res/22);
-                    $('#ranking').text('当前排名：【'+res+"】,手淘第【"+page+'】 页');
+                    console.log(res);
+                    $('#gettitle').text(res['product']['name']);
+                    $('#logo').attr('src',res['product']['img2']);
+                    let page= Math.ceil(res['ranking']/22);
+                    $('#ranking').text('当前排名：【'+res['ranking']+"】,手淘第【"+page+'】 页');
                 }
             });
         }
