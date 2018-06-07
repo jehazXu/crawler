@@ -13,3 +13,7 @@
 Route::get('/', 'PagesController@root')->name('root');
 route::get('jd','JdController@show')->name('jd');
 Route::resource('tmallproduct', 'TmallProductController')->only(['index','store','update','destroy']);
+Route::resource('shoutao', 'ShoutaoController')->only(['index','store','update','destroy']);
+route::post('getranking','ShoutaoController@getRanking')->name('shoutao.getranking');
+
+Route::get('test', 'ShoutaoController@test')->name('test');
