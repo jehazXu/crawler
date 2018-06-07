@@ -38,7 +38,7 @@ class Shoutaoranking extends Model
         else{
             if($page%5==0)
             {
-                sleep(1);
+                sleep(0.1);
             }
             $page++;
             return self::ranking($title,$key,$page,$i);

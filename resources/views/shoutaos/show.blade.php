@@ -4,12 +4,6 @@
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
     <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
-        {{--<div class="form-group">--}}
-            {{--<label class="col-sm-2 control-label">掌柜名称</label>--}}
-            {{--<div class="col-sm-10">--}}
-                {{--<input type="text" class="form-control" id="nick" name="nick" placeholder="输入店铺掌柜名【查找条件，请仔细填写】"/>--}}
-            {{--</div>--}}
-        {{--</div>--}}
       <div class="form-group">
         <label class="col-sm-2 control-label">产品标题</label>
         <div class="col-sm-10">
@@ -33,14 +27,14 @@
     </div>
     <div class="form-group" >
         <div class="col-sm-6">
-            <div class="idTabs" id="idTabs">
+            <div class="idTabs">
                 <ul class="nav nav-pills nav-stacked">
                     @foreach($shoutaos as $shoutao)
                     <li>
                         <a id="{{$shoutao->id}}" onclick='showChart("{{$shoutao->id}}","{{$shoutao->product}}")' class="item">{{$shoutao->title}} <label style="color:red">--【关键词：{{$shoutao->key}}】</label></a>
-                        <button type="button" class="btn text-success btn-xs"  onclick="clecounts('{{$shoutao->id}}')">清空</button>
+                        {{--<button type="button" class="btn text-success btn-xs"  onclick="clecounts('{{$shoutao->id}}')">清空</button>--}}
                         <button type="button" class="btn text-danger btn-xs" onclick="destroy('{{$shoutao->id}}')">删除</button>
-                        <button onclick='search("{{$shoutao->title}}","{{$shoutao->key}}")'  class="btn text-primary btn-xs" >排名</button>
+                        <button onclick='search("{{$shoutao->title}}","{{$shoutao->key}}")'  class="btn text-primary btn-xs" >查看排名</button>
                     </li>
                     @endforeach
                 </ul>
@@ -65,26 +59,8 @@
 @stop
 
 @section('js')
-    <script src="{{asset('js/jquery.idTabs.js')}}"></script>
     <script src="{{asset('libs/loading-master/js/loading.js')}}"></script>
     <script type="text/javascript">
-
-        $(document).ready(function(){
-            $('#idTabs .nav li:first>a').addClass('selected');
-            $(".nav").idTabs();
-
-            var dis=$('#idTabs').offset().top;
-            $(window).scroll(function() {
-                if($(this).scrollTop()>=dis){
-                    var topjs=$(this).scrollTop()-dis;
-                     document.getElementById("#idTabs").style.top=topjs+"px";
-                }else if($(this).scrollTop()<dis){
-                    document.getElementById("#idTabs").style.top="0px";
-                }
-            });
-        });
-        function clecounts(id){
-        }
 
         function destroy(id){
             layer.confirm('确定要删除吗', {
@@ -176,7 +152,7 @@
             $.post('{{route('shoutao.getranking')}}',{'title':title,'key':key,'_token':"{{csrf_token()}}"},function(res){
                 removeLoading('loadfram');
                 if(res=='fail'){
-                    layer.alert('获取失败，或者前100页无排名', {
+                    layer.alert('查询失败，可能前100页无排名', {
                         skin: 'layui-layer-molv' //样式类名
                         ,closeBtn: 0
                     });
