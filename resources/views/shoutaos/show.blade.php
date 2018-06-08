@@ -161,6 +161,7 @@
                     console.log(res);
                     $('#gettitle').text(res['product']['name']);
                     $('#logo').attr('src',res['product']['img2']);
+                    $('#logo').css('display','block');
                     let page= Math.ceil(res['ranking']/22);
                     $('#ranking').text('当前排名：【'+res['ranking']+"】,手淘第【"+page+'】 页');
                 }
