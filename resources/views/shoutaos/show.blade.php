@@ -153,7 +153,7 @@
             $.post('{{route('shoutao.getranking')}}',{'title':title,'key':key,'_token':"{{csrf_token()}}"},function(res){
                 removeLoading('loadfram');
                 if(res=='fail'){
-                    layer.alert('查询失败，可能前20页无排名', {
+                    layer.alert('查询失败，可能前30页无排名', {
                         skin: 'layui-layer-molv' //样式类名
                         ,closeBtn: 0
                     });

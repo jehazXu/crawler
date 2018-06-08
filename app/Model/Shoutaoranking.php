@@ -14,7 +14,7 @@ class Shoutaoranking extends Model
 
     static function ranking($title,$key,$page,$i){
         $find=0;
-        if($page>20){
+        if($page>30){
             return ['msg'=>'fail','ranking'=>-1];
         }
         $lists=self::getLists($key,$page);
@@ -36,10 +36,10 @@ class Shoutaoranking extends Model
             return ['msg'=>'success','ranking'=>$i,'product'=>$product];
         }
         else{
-//            if($page%5==0)
-//            {
-//                sleep(0.1);
-//            }
+            if($page%5==0)
+            {
+                sleep(0.1);
+            }
             $page++;
             return self::ranking($title,$key,$page,$i);
         }
