@@ -47,7 +47,7 @@
 
                 </div>
                 <div>
-                    <img id="logo" src="" style="height: 100px;width: 100px;margin: 10px;">
+                    <img id="logo" src="" style="height: 100px;width: 100px;margin: 10px;" onerror="this.style.display='none'">
                 </div>
                 <div  id="ranking" style="margin:15px 5px;color: red">
 
