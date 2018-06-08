@@ -34,8 +34,8 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 展现的评论</button>
-          <button type="submit2" id="sub2" class="btn btn-success"><span class="glyphicon glyphicon-magnet" aria-hidden="true"></span> 折叠区评论</button>
+          <button type="submit" id="sub" class="btn btn-success"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> 展现的评论</button>
+          <button type="submit2" id="sub2" class="btn btn-success"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span> 折叠区评论</button>
         </div>
         </div>
     </div>
