@@ -40,6 +40,7 @@
                 </ul>
             </div>
             {{$shoutaos->links()}}
+            <div class="alert alert-warning" role="alert">由于某些特殊原因，偶尔查询会失败，重试即可</div>
         </div>
         <div class="col-sm-6" >
             <div class="alert alert-success" role="alert" style="height: 250px">
