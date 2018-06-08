@@ -85,8 +85,8 @@
 
         $('#add').click(function(){
             var title = $('#title').val();
-            // var key = $('#key').val();
-            var nick = $('#nick').val();
+            var key = $('#key').val();
+            // var nick = $('#nick').val();
             if(title=='' || key=='')
             {
                 layer.alert('请输入标题和关键词', {
