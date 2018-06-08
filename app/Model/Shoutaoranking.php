@@ -36,10 +36,10 @@ class Shoutaoranking extends Model
             return ['msg'=>'success','ranking'=>$i,'product'=>$product];
         }
         else{
-            if($page%5==0)
-            {
-                sleep(0.1);
-            }
+//            if($page%5==0)
+//            {
+//                sleep(0.1);
+//            }
             $page++;
             return self::ranking($title,$key,$page,$i);
         }
