@@ -44,11 +44,12 @@
         </div>
         <div class="col-sm-6" >
             <div class="alert alert-success" role="alert" style="height: 250px">
-                <div id="gettitle" style="margin: 5px">
-
-                </div>
-                <div>
+                <div style="display: flex">
                     <img id="logo" src="" style="height: 100px;width: 100px;margin: 10px;" onerror="this.style.display='none'">
+                    <div>
+                        <div id="gettitle" style="margin: 5px;line-height: 25px;"></div>
+                        <div id="showkey" style="margin: 5px 0px;color: blue;"></div>
+                    </div>
                 </div>
                 <div  id="ranking" style="margin:15px 5px;color: red">
 
@@ -138,7 +139,6 @@
                 loadingWidth:240,
                 title:'查询中...请稍等!',
                 name:'loadfram',
-                discription:'抓取中...',
                 direction:'row',
                 type:'pic',
                 originBg:'#71EA71',
@@ -160,11 +160,12 @@
                 }
                 else{
                     console.log(res);
-                    $('#gettitle').text(res['product']['name']);
                     $('#logo').attr('src',res['product']['img2']);
                     $('#logo').css('display','block');
+                    $('#gettitle').text(res['product']['name']);
+                    $('#showkey').text("【关键词："+key+"】");
                     let page= Math.ceil(res['ranking']/22);
-                    $('#ranking').text('当前排名：【'+res['ranking']+"】,手淘第【"+page+'】 页');
+                    $('#ranking').text('当前排名:【'+res['ranking']+"】,手淘第【"+page+'】 页');
                 }
             });
         }
