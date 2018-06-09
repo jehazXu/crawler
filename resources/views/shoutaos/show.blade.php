@@ -7,7 +7,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">产品标题</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="title" name="title" placeholder="输入产品标题【查找条件，请完整填写，两边不要有空格】"/>
+          <input type="text" class="form-control" id="title" name="title" placeholder="输入产品标题【匹配条件，请完整填写，两边不要有空格】"/>
         </div>
       </div>
       <div class="form-group">
