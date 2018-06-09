@@ -165,7 +165,7 @@
                     $('#gettitle').text(res['product']['name']);
                     $('#showkey').text("【关键词："+key+"】");
                     let page= Math.ceil(res['ranking']/22);
-                    $('#ranking').text('当前排名:【'+res['ranking']+"】,手淘第【"+page+'】 页');
+                    $('#ranking').text('当前排名:【'+res['ranking']+"】,手淘第【"+page+'】页');
                 }
             });
         }
