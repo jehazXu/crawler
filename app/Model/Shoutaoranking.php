@@ -46,6 +46,7 @@ class Shoutaoranking extends Model
     }
 
     static function getLists($key,$page){
+        $key=str_replace(' ','%20',$key);
         $url="https://s.m.taobao.com/search?q=".$key."&search=%E6%8F%90%E4%BA%A4&tab=all&sst=1&n=20&buying=buyitnow&m=api4h5&abtest=15&wlsort=15&style=list&closeModues=nav%2Cselecthot%2Conesearch&page=".$page;
         $cnt = file_get_contents($url);
         $arraydata=json_decode($cnt, true);
