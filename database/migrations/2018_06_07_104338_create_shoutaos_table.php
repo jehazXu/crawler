@@ -15,7 +15,6 @@ class CreateShoutaosTable extends Migration
     {
         Schema::create('shoutaos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nick')->comment('掌柜名');
             $table->string('title')->comment('天猫完整产品名');
             $table->string('key')->comment('搜索关键词');
             $table->timestamps();
