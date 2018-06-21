@@ -17,3 +17,6 @@ Route::resource('shoutao', 'ShoutaoController')->only(['index','store','update',
 route::post('getranking','ShoutaoController@getRanking')->name('shoutao.getranking');
 
 Route::get('test', 'ShoutaoController@test')->name('test');
+
+Route::resource('analsisinfos','AnalsisInfosController');
+Route::resource('productanalys','ProductAnalysisController');

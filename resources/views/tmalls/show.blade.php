@@ -189,8 +189,10 @@
             barchart.setOption(optionbar);
         }
         //页面加载时首先加载监控列表第一条的图表
-        showChart("{{$products->first()->id}}","{{$products->first()->product}}");
 
+        @if($products->first())
+        showChart("{{$products->first()->id}}","{{$products->first()->product}}");
+        @endif
         $(document).ready(function(){
             $('#idTabs .nav li:first>a').addClass('selected');
             $(".nav").idTabs();
