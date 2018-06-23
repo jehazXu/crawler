@@ -18,5 +18,4 @@ route::post('getranking','ShoutaoController@getRanking')->name('shoutao.getranki
 
 Route::get('test', 'ShoutaoController@test')->name('test');
 
-Route::resource('analsisinfos','AnalsisInfosController');
 Route::resource('productanalys','ProductAnalysisController');

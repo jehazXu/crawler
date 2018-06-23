@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', '产品分析')
 
+@section('css')
+    <style>
+        .table-header {
+            line-height: 1.5;
+            font-size: 1.2em;
+        }
+    </style>
+@endsection
+
 @section('content')
     <link rel="stylesheet" href="{{asset('libs/loading-master/css/loading.css')}}">
     <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
@@ -13,7 +22,7 @@
             </div>
             <label class="col-sm-2 control-label">cookie</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="cookie" name="cookie" value="{{$cookie}}"
+                <input type="text" class="form-control" id="cookie" name="cookie" ref="cookie" value="{{$cookie}}"
                        placeholder="输入淘宝cookie"/>
             </div>
         </div>
@@ -26,7 +35,6 @@
         </div>
     </div>
     <div class="col-sm-offset-1 col-sm-10" id="count">
-
     </div>
     <div class="form-group">
         @if(count($products))
@@ -38,12 +46,12 @@
                                 <a id="{{$product->id}}" @click='getMsg({{$product->id}})'
                                    class="item">{{$product->name}}</a>
                                 <button type="button" class="btn text-success btn-xs"
-                                        onclick="clecounts('{{$product->id}}')">刷新
+                                        @click='updateMsg({{$product->id}})'>最新
                                 </button>
                                 <button type="button" class="btn text-danger btn-xs"
-                                        onclick="destroy('{{$product->id}}')">删除
+                                        @click='delPro({{$product->id}})'>删除
                                 </button>
-                                <button onclick="window.open('{{$product->url}}')" class="btn text-primary btn-xs">查看
+                                <button onclick="window.open('{{$product->url}}')" class="btn text-primary btn-xs">商品
                                 </button>
                             </li>
                         @endforeach
@@ -53,10 +61,10 @@
             </div>
         @endif
         <div class="col-sm-9 table-responsive">
-
-            <table class="table table-bordered table-striped table-hover bg-light" style="font-size: 1px">
+            <table v-if="items" class="table table-bordered table-striped table-hover bg-light" style="font-size: 1px">
+                <div class="table-header text-center">@{{items[0]?items[0].created_at:''}}</div>
                 <tr>
-                    <th>关键字</th>
+                    <th style="width: 130px">关键字</th>
                     <th>当日流量</th>
                     <th>浏览量</th>
                     <th>浏览占比</th>
@@ -88,21 +96,24 @@
             </table>
         </div>
     </div>
-
 @endsection
 
 @section('js')
     {{--<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>--}}
     <script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
+    <script src="{{asset('js/jquery.idTabs.js')}}"></script>
+    <script src="{{asset('libs/echarts/echarts.js')}}"></script>
+
     <script>
+        var log = console.log.bind(console);
         var app = new Vue({
             el: '#app',
             data: {
-                items: [],
+                items: '',
             },
             methods: {
                 getMsg: function (id) {
-                    axios.get('/productanalys/'+id)
+                    axios.get('/productanalys/' + id)
                         .then((response) => {
                             this.items = response.data;
                         })
@@ -110,12 +121,49 @@
                             console.log(error);
                         });
                 },
+                updateMsg: function (id) {
+                    axios.patch('/productanalys/' + id, {cookie: this.$refs.cookie.value})
+                        .then((response) => {
+                            console.log(response);
+                            switch (response.data) {
+                                case 'cookie'://cookie失效
+                                    log(cookie);
+                                    layer.msg('cookie失效请更新cookie');
+                                    window.location.href = '{{route("productanalys.index")}}';
+                                    break;
+                                default:
+                                    layer.msg('更新成功');
+                                    this.items = response.data;
+                                    break;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                },
+                delPro: function (id) {
+                    axios.delete('/productanalys/' + id)
+                        .then((response) => {
+                            switch (response.data) {
+                                case 'success':
+                                    layer.msg('删除成功');
+                                    window.location.href = '{{route("productanalys.index")}}';
+                                    break;
+                                default:
+                                    layer.msg('删除失败');
+                                    break;
+
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
             }
         })
     </script>
 
-    <script src="{{asset('js/jquery.idTabs.js')}}"></script>
-    <script src="{{asset('libs/echarts/echarts.js')}}"></script>
+
     <script type="text/javascript">
         $('#sub').click(function () {
             var url = $('#url').val();

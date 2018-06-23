@@ -4,18 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Model\AnalsisInfo;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Model\ProductAnalysis;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use function Sodium\library_version_major;
 
 class ProductAnalysisController extends Controller
 {
     const INFO_INDEX = [
         'product_analysis_id', 'keyword', 'uv', 'pv_value', 'pv_ratio',
         'bounce_self_uv', 'bounce_uv', 'clt_cnt', 'cart_byr_cnt', 'crt_byr_cnt',
-        'crt_rate', 'pay_itm_cnt', 'pay_byr_cnt', 'pay_rate'
+        'crt_rate', 'pay_itm_cnt', 'pay_byr_cnt', 'pay_rate', 'created_at', 'updated_at'
     ];
 
     /**
@@ -25,8 +24,10 @@ class ProductAnalysisController extends Controller
      */
     public function index()
     {
+
         $products = ProductAnalysis::all();
         $cookie = \App\Model\Cookie::first()->value ?? '';
+
         return view('analysis.show', compact('products', 'cookie'));
     }
 
@@ -37,12 +38,6 @@ class ProductAnalysisController extends Controller
      */
     public function create()
     {
-        $cookie = Input::get('cookie');
-
-        return $message = $this->getMessage($cookie, 10);
-
-        \App\Model\AnalsisInfo::insert($message);
-
     }
 
     /**
@@ -68,7 +63,7 @@ class ProductAnalysisController extends Controller
             if ($message === -1)
                 return 'cookie';
 
-            \App\Model\AnalsisInfo::insert($message);
+            AnalsisInfo::insert($message);
 
             return 'success';
         } else {
@@ -84,7 +79,8 @@ class ProductAnalysisController extends Controller
      */
     public function show($id)
     {
-        return \App\Model\AnalsisInfo::where('product_analysis_id', $id)->get();
+        $time = AnalsisInfo::where('product_analysis_id', $id)->max('created_at');
+        return AnalsisInfo::where([['product_analysis_id', '=', $id], ['created_at', '=', $time],])->get();
     }
 
     /**
@@ -95,7 +91,6 @@ class ProductAnalysisController extends Controller
      */
     public function edit($id)
     {
-        //
     }
 
     /**
@@ -107,7 +102,25 @@ class ProductAnalysisController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //是否最新
+        if (Carbon::parse(AnalsisInfo::where('product_analysis_id', $id)->max('created_at'))->isToday()) {
+            return $this->show($id);
+        }
+
+        $product = ProductAnalysis::find($id);
+        if (!$product) {
+            return "exist";
+        }
+
+
+        $cookie = $request->cookie;
+        $message = $this->getMessage($cookie, $id, $product->skuid);
+        if ($message === -1)
+            return 'cookie';
+
+        AnalsisInfo::insert($message);
+
+        return $message;
     }
 
     /**
@@ -118,7 +131,20 @@ class ProductAnalysisController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try{
+            $pa = ProductAnalysis::find($id)->delete();
+            $ai = AnalsisInfo::where('product_analysis_id', $id)->delete();
+            if($pa&&$ai){
+                DB::commit();
+                return 'success';
+            }
+            DB::rollback();
+            return 'fail';
+        }catch (\Exception $exception){
+            DB::rollback();
+            return 'fail';
+        }
     }
 
 
@@ -131,7 +157,8 @@ class ProductAnalysisController extends Controller
      */
     public function getMessage($cookie, $id, $skuid)
     {
-        $opt['cookie'] = Input::get('cookie');
+        $time = Carbon::now()->toDateString();
+        $opt['cookie'] = $cookie;
         $opt['date'] = Carbon::yesterday()->toDateString();
         $opt['header'][] = 'User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36';
         $opt['header'][] = 'Cookie:cookie2=' . $opt['cookie'];
@@ -162,7 +189,7 @@ class ProductAnalysisController extends Controller
 
             if (count($message['data']['data']) === 0) break;
 
-            $collection2 = collect($message['data']['data'])->map(function($item) use ($id) {
+            $collection2 = collect($message['data']['data'])->map(function($item) use ($id, $time) {
                 $res[] = $id;
                 $res[] = $item['pageName']['value'];
                 $res[] = $item['uv']['value'];
@@ -177,6 +204,8 @@ class ProductAnalysisController extends Controller
                 $res[] = $item['payItmCnt']['value'];
                 $res[] = $item['payByrCnt']['value'];
                 $res[] = round($item['payRate']['value'] * 100, 2);
+                $res[] = $time;
+                $res[] = $time;
                 return array_combine(self::INFO_INDEX, $res);
             })->toArray();
             $collection = array_merge($collection, $collection2);

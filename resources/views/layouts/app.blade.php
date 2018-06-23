@@ -9,6 +9,7 @@
     <title>@yield('title', '工具') - 博飞科技</title>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @yield('css')
 </head>
 <body>
     <div id="app" class="{{ route_class() }}-page">

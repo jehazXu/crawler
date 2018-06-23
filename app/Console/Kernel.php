@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \App\Console\Commands\TmallCollectCount::class,
+        \App\Console\Commands\SendMessage::class
     ];
 
     /**
@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('TmallCollectCount')->twiceDaily(1, 13);
+        $schedule->command('send')->everyMinute();
     }
 
     /**

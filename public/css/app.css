@@ -2016,21 +2016,21 @@ pre code {
   clear: both;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 868px) {
   .container {
-    width: 750px;
+    width: 850px;
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1092px) {
   .container {
-    width: 970px;
+    width: 1070px;
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .container {
-    width: 1170px;
+    width: 1270px;
   }
 }
 

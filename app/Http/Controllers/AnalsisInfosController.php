@@ -16,7 +16,6 @@ class AnalsisInfosController extends Controller
      */
     public function index()
     {
-        return new AnalsisInfoCollection(AnalsisInfo::all());
     }
 
     /**

@@ -32,6 +32,7 @@ class CreateAnalsisInfosTable extends Migration
             $table->string('m_ranking')->default('')->comment('M端排名');
             $table->index('product_analysis_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

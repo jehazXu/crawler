@@ -19,6 +19,7 @@ class CreateProductAnalysisTable extends Migration
             $table->string('skuid')->comment('天猫产品id');
             $table->text('url')->comment('天猫产品链接');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
