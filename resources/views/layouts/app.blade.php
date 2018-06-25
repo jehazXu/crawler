@@ -26,12 +26,10 @@
 
     </div>
 
-    <!-- Scripts -->
-    {{--<script src="{{ asset('js/app.js') }}"></script>--}}
+
+{{--    <script src="{{ asset('js/app.js') }}"></script>--}}
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="{{ asset('libs/layer/layer.js') }}"></script>
-    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
-
     @yield('js')
 </body>
 </html>

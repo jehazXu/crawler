@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Model\ProductAnalysis;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Validator;
 
 class ProductAnalysisController extends Controller
 {
@@ -18,50 +18,53 @@ class ProductAnalysisController extends Controller
     ];
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * 显示产品分析页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-
-        $products = ProductAnalysis::all();
+        $products = ProductAnalysis::paginate(6);;
         $cookie = \App\Model\Cookie::first()->value ?? '';
 
         return view('analysis.show', compact('products', 'cookie'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-    }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * 产品分析入库
+     * @param Request $request
+     * @return string
      */
     public function store(Request $request)
     {
-        $isexist = ProductAnalysis::where('skuid', $request->skuid)->first();
-        if ($isexist) {
-            return "exist";
+        $cookie = $skuid = $product = $url = '';
+
+        $validator = Validator::make($request->all(), [
+            'cookie' => 'required|string',
+            'skuid' => 'required|string',
+            'product' => 'required|string',
+            'url' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return 'key';
         }
+
+        extract($request->input());
+
+        $isexist = ProductAnalysis::where('skuid', $skuid)->first();
+
+        if ($isexist) return "exist";
+
         try {
-            $id = ProductAnalysis::create(['name' => $request->product, 'skuid' => $request->skuid, 'url' => $request->url])->id;
+            $id = ProductAnalysis::create(['name' => $product, 'skuid' => $skuid, 'url' => $url])->id;
         } catch (Exception $e) {
             return $e->getMessage();
         }
         if ($id) {
-            $cookie = $request->cookie;
-            $message = $this->getMessage($cookie, $id, $request->skuid);
-            if ($message === -1)
-                return 'cookie';
+            $message = $this->getMessage($cookie, $id, $skuid);
+
+            if ($message === -1) return 'cookie';
 
             AnalsisInfo::insert($message);
 
@@ -72,10 +75,9 @@ class ProductAnalysisController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * 获取产品的分析数据
+     * @param $id 产品id
+     * @return mixed
      */
     public function show($id)
     {
@@ -84,39 +86,35 @@ class ProductAnalysisController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * 更新产品分析数据
+     * @param Request $request
+     * @param $id 产品id
+     * @return array|int|mixed|string
      */
     public function update(Request $request, $id)
     {
+        $cookie = $request->cookie;
+
+        $validator = Validator::make($request->all(), [
+            'cookie' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return 'cookie';
+        }
+
         //是否最新
         if (Carbon::parse(AnalsisInfo::where('product_analysis_id', $id)->max('created_at'))->isToday()) {
             return $this->show($id);
         }
 
         $product = ProductAnalysis::find($id);
-        if (!$product) {
-            return "exist";
-        }
 
+        if (!$product) return "exist";
 
-        $cookie = $request->cookie;
         $message = $this->getMessage($cookie, $id, $product->skuid);
-        if ($message === -1)
-            return 'cookie';
+
+        if ($message === -1) return 'cookie';
 
         AnalsisInfo::insert($message);
 
@@ -124,24 +122,23 @@ class ProductAnalysisController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * 删除产品数据
+     * @param $id 产品id
+     * @return string
      */
     public function destroy($id)
     {
         DB::beginTransaction();
-        try{
+        try {
             $pa = ProductAnalysis::find($id)->delete();
             $ai = AnalsisInfo::where('product_analysis_id', $id)->delete();
-            if($pa&&$ai){
+            if ($pa !== false && $ai !== false) {
                 DB::commit();
                 return 'success';
             }
             DB::rollback();
             return 'fail';
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollback();
             return 'fail';
         }

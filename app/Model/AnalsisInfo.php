@@ -25,7 +25,7 @@ class AnalsisInfo extends Model
     }
 
     public function getCreatedAtAttribute($value){
-        return Carbon::parse($value)->toDateString();
+        return Carbon::parse($value)->yesterday()->toDateString();
     }
     public function getUpdatedAtAttribute($value){
         return Carbon::parse($value)->toDateString();
