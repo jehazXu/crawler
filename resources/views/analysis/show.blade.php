@@ -23,6 +23,8 @@
                        value=""
                        placeholder="输入天猫产品网址"/>
             </div>
+        </div>
+        <div class="form-group">
             <label class="col-sm-2 control-label">cookie</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="cookie" name="cookie" ref="cookie" value="{{$cookie}}"
