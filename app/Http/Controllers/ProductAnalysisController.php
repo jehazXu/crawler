@@ -14,7 +14,7 @@ class ProductAnalysisController extends Controller
     const INFO_INDEX = [
         'product_analysis_id', 'keyword', 'uv', 'pv_value', 'pv_ratio',
         'bounce_self_uv', 'bounce_uv', 'clt_cnt', 'cart_byr_cnt', 'crt_byr_cnt',
-        'crt_rate', 'pay_itm_cnt', 'pay_byr_cnt', 'pay_rate', 'created_at', 'updated_at'
+        'crt_rate', 'pay_itm_cnt', 'pay_byr_cnt', 'pay_rate', 'created_at', 'updated_at', 'day'
     ];
 
     /**
@@ -37,13 +37,16 @@ class ProductAnalysisController extends Controller
      */
     public function store(Request $request)
     {
-        $cookie = $skuid = $product = $url = '';
+        $cookie = $skuid = $product = $url = $keyword = $str_time = $end_time = '';
 
         $validator = Validator::make($request->all(), [
             'cookie' => 'required|string',
             'skuid' => 'required|string',
             'product' => 'required|string',
             'url' => 'required|string',
+            'keyword' => 'required|string',
+            'str_time' => 'required|date',
+            'end_time' => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -52,26 +55,42 @@ class ProductAnalysisController extends Controller
 
         extract($request->input());
 
-        $isexist = ProductAnalysis::where('skuid', $skuid)->first();
-
-        if ($isexist) return "exist";
-
         try {
-            $id = ProductAnalysis::create(['name' => $product, 'skuid' => $skuid, 'url' => $url])->id;
+            $id = ProductAnalysis::create([
+                'name' => $product, 'skuid' => $skuid, 'url' => $url, 'keyword' => $keyword,
+                'str_time' => $str_time, 'end_time' => $end_time
+            ])->id;
         } catch (Exception $e) {
             return $e->getMessage();
         }
         if ($id) {
-            $message = $this->getMessage($cookie, $id, $skuid);
 
-            if ($message === -1) return 'cookie';
+            $str_day = Carbon::parse($str_time);
+            $dayNum = $str_day->diffInDays($end_time, false) + 1;
+
+            //天数必须大于0
+            if ($dayNum <= 0) return 'day';
+
+            $message = [];
+            //获取每一天的数据
+            for ($i = 0; $i < $dayNum; $i++) {
+                $day = $str_day->addDay($i ? 1 : 0)->toDateString();
+                $data = $this->getMessage($cookie, $id, $skuid, $day, $day);
+
+                if ($data === -1) return 'cookie';
+                $data = $this->matchKey($data, $keyword);
+
+                if (!$data) return 'null';
+                $message[] = $data;
+            }
 
             AnalsisInfo::insert($message);
 
             return 'success';
-        } else {
-            return 'fail';
         }
+
+        return 'fail';
+
     }
 
     /**
@@ -82,7 +101,7 @@ class ProductAnalysisController extends Controller
     public function show($id)
     {
         $time = AnalsisInfo::where('product_analysis_id', $id)->max('created_at');
-        return AnalsisInfo::where([['product_analysis_id', '=', $id], ['created_at', '=', $time],])->get();
+        return AnalsisInfo::where([['product_analysis_id', '=', $id], ['created_at', '=', $time], ])->get();
     }
 
     /**
@@ -93,6 +112,7 @@ class ProductAnalysisController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $cookie = $request->cookie;
 
         $validator = Validator::make($request->all(), [
@@ -103,22 +123,45 @@ class ProductAnalysisController extends Controller
             return 'cookie';
         }
 
-        //是否最新
-        if (Carbon::parse(AnalsisInfo::where('product_analysis_id', $id)->max('created_at'))->isToday()) {
-            return $this->show($id);
+        $product = ProductAnalysis::findOrFail($id);
+
+        $str_day = Carbon::parse($product->str_time);
+        $dayNum = $str_day->diffInDays($product->end_time, false) + 1;
+
+        //天数必须大于0
+        if ($dayNum <= 0) return 'day';
+
+        $message = [];
+
+        for ($i = 0; $i < $dayNum; $i++) {
+            $day = $str_day->addDay($i ? 1 : 0)->toDateString();
+
+            $data = $this->getMessage($cookie, $id, $product->skuid, $day, $day);
+
+            if ($data === -1) return 'cookie';
+
+            $data = $this->matchKey($data, $product->keyword);
+
+            if (!$data) return 'null';
+
+            $message[] = $data;
         }
 
-        $product = ProductAnalysis::find($id);
+        DB::beginTransaction();
+        try {
 
-        if (!$product) return "exist";
+            if ($product->analsisinfos()->delete() !== false && AnalsisInfo::insert($message)!==false) {
 
-        $message = $this->getMessage($cookie, $id, $product->skuid);
+                DB::commit();
+                return $message;
+            }
+            DB::rollback();
+            return 'fail';
+        } catch (\Exception $exception) {
+            DB::rollback();
+            return 'fail';
+        }
 
-        if ($message === -1) return 'cookie';
-
-        AnalsisInfo::insert($message);
-
-        return $message;
     }
 
     /**
@@ -147,12 +190,15 @@ class ProductAnalysisController extends Controller
 
     /**
      * 获取接口内容
+     * 
      * @param $cookie 淘宝登录cookie
-     * @param $id product_analysis_id
+     * @param $id product_analysis_id 产品id
      * @param $skuid 淘宝产品id
-     * @return array|int
+     * @param [string] $str_time 开始日期
+     * @param [string] $end_time 结束日期
+     * @return sting | int
      */
-    public function getMessage($cookie, $id, $skuid)
+    public function getMessage($cookie, $id, $skuid, $str_time, $end_time)
     {
         $time = Carbon::now()->toDateString();
         $opt['cookie'] = $cookie;
@@ -170,7 +216,7 @@ class ProductAnalysisController extends Controller
         $collection = [];
         while (true) {
             $page++;
-            $opt['url'] = "https://sycm.taobao.com/flow/new/item/source/detail.json?itemId={$skuid}&dateType=day&dateRange={$opt['date']}%7C{$opt['date']}&pageId=23.s1150&pPageId=23&pageLevel=2&childPageType=se_keyword&page={$page}&pageSize=20&order=desc&orderBy=uv&device=2&_=1529478971975&token=81deecc55";
+            $opt['url'] = "https://sycm.taobao.com/flow/new/item/source/detail.json?itemId={$skuid}&dateType=day&dateRange={$str_time}%7C{$end_time}&pageId=23.s1150&pPageId=23&pageLevel=2&childPageType=se_keyword&page={$page}&pageSize=20&order=desc&orderBy=uv&device=2&_=1529478971975&token=81deecc55";
             curl_setopt($curl, CURLOPT_URL, $opt['url']);
             $str = curl_exec($curl);
 
@@ -186,7 +232,7 @@ class ProductAnalysisController extends Controller
 
             if (count($message['data']['data']) === 0) break;
 
-            $collection2 = collect($message['data']['data'])->map(function($item) use ($id, $time) {
+            $collection2 = collect($message['data']['data'])->map(function ($item) use ($id, $time, $str_time) {
                 $res[] = $id;
                 $res[] = $item['pageName']['value'];
                 $res[] = $item['uv']['value'];
@@ -203,6 +249,7 @@ class ProductAnalysisController extends Controller
                 $res[] = round($item['payRate']['value'] * 100, 2);
                 $res[] = $time;
                 $res[] = $time;
+                $res[] = $str_time;
                 return array_combine(self::INFO_INDEX, $res);
             })->toArray();
             $collection = array_merge($collection, $collection2);
@@ -210,4 +257,17 @@ class ProductAnalysisController extends Controller
         curl_close($curl);
         return $collection;
     }
+
+    /**
+     * 匹配关键字
+     *
+     * @param [array] $data    匹配的数据
+     * @param [string] $keyword 关键字
+     * @return array | null
+     */
+    public function matchKey($data, $keyword)
+    {
+        return collect($data)->firstWhere('keyword', $keyword);
+    }
+
 }
