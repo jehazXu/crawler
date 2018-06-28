@@ -115,7 +115,7 @@
             <label class="form-check-label small">
                 <input type="checkbox" class="form-check-input" v-model="keys.pay_itm_cnt" :checked="keys.pay_itm_cnt">&nbsp;支付件数&nbsp;&nbsp;&nbsp;</label>
             <label class="form-check-label small">
-                <input type="checkbox" class="form-check-input" v-model="keys.pay_byr_cnt" :checked="keys.pay_byr_cnt">&nbsp;支付人数&nbsp;&nbsp;&nbsp;</label>
+                <input type="checkbox" class="form-check-input" v-model="keys.pay_byr_cnt" :checked="keys.pay_byr_cnt">&nbsp;命中笔数&nbsp;&nbsp;&nbsp;</label>
             <label class="form-check-label small">
                 <input type="checkbox" class="form-check-input" v-model="keys.pay_rate" :checked="keys.pay_rate">&nbsp;支付转化率&nbsp;&nbsp;&nbsp;</label>
         </div>
@@ -135,11 +135,11 @@
                 <th v-show="keys.crt_byr_cnt">下单数</th>
                 <th v-show="keys.crt_rate">下单转化率</th>
                 <th v-show="keys.pay_itm_cnt">支付件数</th>
-                <th v-show="keys.pay_byr_cnt">支付人数</th>
+                <th v-show="keys.pay_byr_cnt">命中笔数</th>
                 <th v-show="keys.pay_rate">支付转化率</th>
             </tr>
             <tr v-for="item in items">
-                <td v-show="keys.keyword">@{{ item.day }}</td>
+                <td v-show="true">@{{ item.day }}</td>
                 <td v-show="keys.keyword">@{{ item.keyword }}</td>
                 <td v-show="keys.uv">@{{ item.uv }}</td>
                 <td v-show="keys.pv_value">@{{ item.pv_value }}</td>
@@ -197,15 +197,15 @@
             keys: {
                 "keyword": true,
                 "uv": true,
-                "pv_value": true,
-                "pv_ratio": true,
-                "bounce_self_uv": true,
-                "bounce_uv": true,
-                "clt_cnt": true,
-                "cart_byr_cnt": true,
-                "crt_byr_cnt": true,
-                "crt_rate": true,
-                "pay_itm_cnt": true,
+                "pv_value": false,
+                "pv_ratio": false,
+                "bounce_self_uv": false,
+                "bounce_uv": false,
+                "clt_cnt": false,
+                "cart_byr_cnt": false,
+                "crt_byr_cnt": false,
+                "crt_rate": false,
+                "pay_itm_cnt": false,
                 "pay_byr_cnt": true,
                 "pay_rate": true
             },
@@ -220,7 +220,7 @@
                 "crt_byr_cnt": "下单数",
                 "crt_rate": "下单转化率",
                 "pay_itm_cnt": "支付件数",
-                "pay_byr_cnt": "支付人数",
+                "pay_byr_cnt": "命中笔数",
                 "pay_rate": "支付转化率"
             },
         },
