@@ -1,7 +1,7 @@
 @extends('layouts.app') 
 @section('title', '产品分析') 
 @section('css')
-
+<link rel="stylesheet" href="{{asset('css/loding.css')}}">
 <style>
     .table-header {
         line-height: 1.5;
@@ -11,11 +11,22 @@
     [v-cloak] {
         display: none !important;
     }
+    #loding {
+        position: absolute;
+        z-index: 99999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(5, 5, 5, 0.2);
+    }
 </style>
 @endsection
  
 @section('content')
-
+<loding-bar :show='show' ></loding-bar>
 <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
     <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
@@ -28,7 +39,8 @@
         </div>
         <label class="col-sm-2 control-label">cookie</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="cookie" name="cookie" ref="cookie" value="{{$cookie}}" placeholder="输入淘宝cookie"/>
+            <input type="text" class="form-control" id="cookie" name="cookie" ref="cookie" value="{{$cookie}}" placeholder="输入淘宝cookie"
+            />
         </div>
     </div>
 
@@ -111,7 +123,7 @@
 
             <div class="table-header text-center">@{{items[0]?items[0].created_at:''}}</div>
             <tr>
-                <th v-show="true" >日期</th>
+                <th v-show="true">日期</th>
                 <th v-show="keys.keyword" style="width: 130px">关键字</th>
                 <th v-show="keys.uv">当日流量</th>
                 <th v-show="keys.pv_value">浏览量</th>
@@ -143,7 +155,7 @@
                 <td v-show="keys.pay_rate">@{{ item.pay_rate }}</td>
             </tr>
         </table>
-        <div >
+        <div>
             <div ref="uv" id="uv" style="height:300px;" v-show="keys.uv"></div>
             <div ref="pv_value" id="pv_value" style="height:300px;" v-show="keys.pv_value"></div>
             <div ref="pv_ratio" id="pv_ratio" style="height:300px;" v-show="keys.pv_ratio"></div>
@@ -167,14 +179,20 @@
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
 <script src="{{asset('libs/echarts/echarts.js')}}"></script>
-
 <script>
+
     var log = console.log.bind(console);
 
+    //loding组件
+    Vue.component('loding-bar', {
+        props: ['show'],
+        template: '<div id="loding" v-show="show"><div class="windows8"><div class="wBall" id="wBall_1"><div class="wInnerBall"></div></div><div class="wBall" id="wBall_2"><div class="wInnerBall"></div></div><div class="wBall" id="wBall_3"><div class="wInnerBall"></div></div><div class="wBall" id="wBall_4"><div class="wInnerBall"></div></div><div class="wBall" id="wBall_5"><div class="wInnerBall"></div></div></div></div>'
+    })
 
     var app = new Vue({
         el: '#app',
         data: {
+            show: false,
             items: '',
             keys: {
                 "keyword": true,
@@ -208,7 +226,6 @@
         },
         methods: {
             create: function () {
-
                 let url = this.$refs.pro_url.value;
                 let cookie = this.$refs.cookie.value;
                 let keyword = this.$refs.keyword.value;
@@ -220,29 +237,15 @@
                     return false;
                 }
 
-                let re = /&id=\d*/;
-                let re2 = /\?id=\d*/;
-                let re_num = /\d+/;
-                try {
-                    var id = url.match(re)[0].match(re_num);
-                } catch (err) {}
-
-
-                if (!id) {
-                    try {
-                        let gid = url.match(re2);
-                        id = gid[0].match(re_num);
-                    } catch (err2) {
-                        alert(err2);
-                        return false;
-                    }
-                }
-
+                id = this.getId(url);
+      
                 layer.prompt({
                     title: '请输入显示在列表中的名称',
                     formType: 2
-                }, function (text, index) {
+                },  (text, index) => {
                     layer.close(index);
+                    //开始loding
+                    this.show = true;
                     axios.post("{{route('productanalys.store')}}", {
                         'skuid': id[0],
                         'url': url,
@@ -252,6 +255,8 @@
                         'str_time': str_time,
                         'end_time': end_time
                     }).then((response) => {
+                        //结束loding
+                        this.show = false;
                         switch (response.data) {
                             case 'success':
                                 layer.msg('已添加到监控列表');
@@ -259,22 +264,19 @@
                                 break;
                             case 'fail':
                                 layer.alert('添加失败', {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 break;
                             case 'null':
                                 layer.alert('没有数据', {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 break;
                             case 'cookie':
                                 layer.alert('cookie失效请更新cookie', {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 window.setTimeout(function () {
@@ -283,64 +285,83 @@
                                 break;
                             default:
                                 layer.alert(res, {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 break;
                         }
                     }).catch(function (error) {
+                        //结束loding
+                        this.show = false;
                         console.log(error);
                     });
 
                 });
             },
+            getId: function (url) {
+                let re = /&id=\d*/;
+                let re2 = /\?id=\d*/;
+                let re_num = /\d+/;
+                try {
+                    return url.match(re)[0].match(re_num);
+                } catch (err) {}
+
+
+                if (!id) {
+                    try {
+                        let gid = url.match(re2);
+                        return gid[0].match(re_num);
+                    } catch (err2) {
+                        alert(err2);
+                        return false;
+                    }
+                }
+            },
             getMsg: function (id) {
-                
                 axios.get('/productanalys/' + id)
                     .then((response) => {
-                       
                         this.createCharts(response.data);
                         this.items = response.data;
                     })
                     .catch(function (error) {
-                        // console.log(error);
+                        console.log(error);
                     });
             },
             updateMsg: function (id) {
+                //开始loding
+                this.show = true;
                 axios.patch('/productanalys/' + id, {
                         cookie: this.$refs.cookie.value
                     })
                     .then((response) => {
-                        log(response);
+                        //结束loding
+                        this.show = false;
                         switch (response.data) {
                             case 'cookie': //cookie失效
-                                log(cookie);
                                 layer.msg('cookie失效请更新cookie');
                                 break;
                             case 'null':
                                 layer.alert('没有数据', {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 break;
                             case 'fail':
                                 layer.alert('更新出错', {
-                                    skin: 'layui-layer-molv' //样式类名
-                                        ,
+                                    skin: 'layui-layer-molv', //样式类名
                                     closeBtn: 0
                                 });
                                 break;
                             default:
                                 layer.msg('更新成功');
-                            
                                 this.createCharts(response.data);
                                 this.items = response.data;
                                 break;
                         }
                     })
                     .catch(function (error) {
+                        //结束loding
+                        this.show = false;
                         console.log(error);
                     });
             },
@@ -355,7 +376,6 @@
                             default:
                                 layer.msg('删除失败');
                                 break;
-
                         }
                     })
                     .catch(function (error) {
@@ -363,7 +383,6 @@
                     });
             },
             createCharts: function(data) {
-
                 let keys = Object.keys(this.keys);
                 keys.shift();
                 let list = new Array();
@@ -381,9 +400,6 @@
                     }
 
                 });
-
-                log(list);
-
                 keys.forEach((key)=>{
                     if(this.keys[key]){
                         // 基于准备好的dom，初始化echarts实例
