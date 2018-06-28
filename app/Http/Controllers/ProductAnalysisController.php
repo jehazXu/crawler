@@ -113,20 +113,24 @@ class ProductAnalysisController extends Controller
     public function update(Request $request, $id)
     {
 
-        $cookie = $request->cookie;
+        $cookie = $str_time = $end_time = '';
 
         $validator = Validator::make($request->all(), [
             'cookie' => 'required|string',
+            'str_time' => 'required|date',
+            'end_time' => 'required|date'
         ]);
 
         if ($validator->fails()) {
-            return 'cookie';
+            return 'required';
         }
+
+        extract($request->input());
 
         $product = ProductAnalysis::findOrFail($id);
 
-        $str_day = Carbon::parse($product->str_time);
-        $dayNum = $str_day->diffInDays($product->end_time, false) + 1;
+        $str_day = Carbon::parse($str_time);
+        $dayNum = $str_day->diffInDays($end_time, false) + 1;
 
         //天数必须大于0
         if ($dayNum <= 0) return 'day';
@@ -150,7 +154,9 @@ class ProductAnalysisController extends Controller
         DB::beginTransaction();
         try {
 
-            if ($product->analsisinfos()->delete() !== false && AnalsisInfo::insert($message)!==false) {
+            if ($product->analsisinfos()->delete() !== false &&
+                AnalsisInfo::insert($message) !== false &&
+                $product->update(['str_time' => $str_time, 'end_time' => $end_time]) !== false) {
 
                 DB::commit();
                 return $message;

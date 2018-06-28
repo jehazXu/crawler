@@ -3,6 +3,14 @@
 @section('css')
 <link rel="stylesheet" href="{{asset('css/loding.css')}}">
 <style>
+    .padding-1{
+        padding:1px;
+    }
+
+    .height-60{
+        height: 60px
+    }
+
     .table-header {
         line-height: 1.5;
         font-size: 1.2em;
@@ -11,6 +19,7 @@
     [v-cloak] {
         display: none !important;
     }
+
     #loding {
         position: absolute;
         z-index: 99999;
@@ -22,11 +31,13 @@
         height: 100%;
         background: rgba(5, 5, 5, 0.2);
     }
+
+
 </style>
 @endsection
  
 @section('content')
-<loding-bar :show='show' ></loding-bar>
+<loding-bar :show='show'></loding-bar>
 <div class="form-horizontal" action="{{route('api.jd.crawler')}}" method="post">
     <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
@@ -43,8 +54,6 @@
             />
         </div>
     </div>
-
-
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" id="sub" class="btn btn-success pull-left" @click="create()">
@@ -52,19 +61,18 @@
             </button>
             <div class="input-group col-sm-4">
                 <div class="input-group-addon">开始时间</div>
-                </label>
+
                 <input type="date" ref='str_time' max="{{Carbon\Carbon::yesterday()->toDateString()}}" value="{{Carbon\Carbon::yesterday()->toDateString()}}"
                     class="form-control">
                 <div class="input-group-addon">结束时间</div>
-                </label>
+
                 <input type="date" ref='end_time' max="{{Carbon\Carbon::yesterday()->toDateString()}}" value="{{Carbon\Carbon::yesterday()->toDateString()}}"
                     class="form-control">
             </div>
         </div>
     </div>
 </div>
-<div c lass="col-sm-offset-1 col-sm-10" id="count">
-</div>
+
 <div class="form-group" v-cloak>
     @if(count($products))
     <div class="col-sm-4">
@@ -72,17 +80,15 @@
             <ul class="nav nav-pills nav-stacked">
                 @foreach($products as $product)
                 <li>
-                    <a id="{{$product->id}}" @click='getMsg({{$product->id}})' class="item">
-                        {{$product->name}}
+                    <a @click='getMsg({{$product->id}})' class="item">
+                        <span>{{$product->name}}</span>
                         <div class="text-danger small">关键词 : {{$product->keyword}}</div>
-                        <div class="text-success small">{{$product->str_time}} : {{$product->end_time}}</div>
+                        <input class="col-sm-6 padding-1 text-success"  class="pull-left" @click.stop="" type="date" max="{{Carbon\Carbon::yesterday()->toDateString()}}" value="{{$product->str_time}}">
+                        <input class="col-sm-6 padding-1 text-success"  class="pull-left" @click.stop="" type="date" max="{{Carbon\Carbon::yesterday()->toDateString()}}" value="{{$product->end_time}}">
                     </a>
-                    <button type="button" class="btn text-success btn-xs" @click='updateMsg({{$product->id}})'>重新获取
-                    </button>
-                    <button type="button" class="btn text-danger btn-xs" @click='delPro({{$product->id}})'>删除
-                    </button>
-                    <button onclick="window.open('{{$product->url}}')" class="btn text-primary btn-xs">商品
-                    </button>
+                    <button type="button" class="btn text-success btn-xs" @click='updateMsg($event, {{$product->id}})'>重启</button>
+                    <button type="button" class="btn text-danger btn-xs" @click='delPro({{$product->id}})'>删除</button>
+                    <button onclick="window.open('{{$product->url}}')" class="btn text-primary btn-xs">商品</button>
                 </li>
                 @endforeach
             </ul>
@@ -91,7 +97,7 @@
     </div>
 
     <div class="col-sm-8 table-responsive">
-        <div class="form-check" style="height: 60px">
+        {{-- <div class="form-check height-60">
             <label class="form-check-label small">
                 <input type="checkbox" class="form-check-input" v-model="keys.keyword" :checked="keys.keyword">&nbsp;关键字&nbsp;&nbsp;&nbsp;</label>
             <label class="form-check-label small">
@@ -118,7 +124,7 @@
                 <input type="checkbox" class="form-check-input" v-model="keys.pay_byr_cnt" :checked="keys.pay_byr_cnt">&nbsp;命中笔数&nbsp;&nbsp;&nbsp;</label>
             <label class="form-check-label small">
                 <input type="checkbox" class="form-check-input" v-model="keys.pay_rate" :checked="keys.pay_rate">&nbsp;支付转化率&nbsp;&nbsp;&nbsp;</label>
-        </div>
+        </div> --}}
         <table v-if="items" class="table table-bordered table-striped table-hover bg-light">
 
             <div class="table-header text-center">@{{items[0]?items[0].created_at:''}}</div>
@@ -136,23 +142,23 @@
                 <th v-show="keys.crt_rate">下单转化率</th>
                 <th v-show="keys.pay_itm_cnt">支付件数</th>
                 <th v-show="keys.pay_byr_cnt">命中笔数</th>
-                <th v-show="keys.pay_rate">支付转化率</th>
+                <th v-show="keys.pay_rate">支付转化率(%)</th>
             </tr>
             <tr v-for="item in items">
                 <td v-show="true">@{{ item.day }}</td>
                 <td v-show="keys.keyword">@{{ item.keyword }}</td>
                 <td v-show="keys.uv">@{{ item.uv }}</td>
                 <td v-show="keys.pv_value">@{{ item.pv_value }}</td>
-                <td v-show="keys.pv_ratio">@{{ item.pv_ratio }}</td>
+                <td v-show="keys.pv_ratio">@{{ item.pv_ratio }}%</td>
                 <td v-show="keys.bounce_self_uv">@{{ item.bounce_self_uv }}</td>
                 <td v-show="keys.bounce_uv">@{{ item.bounce_uv }}</td>
                 <td v-show="keys.clt_cnt">@{{ item.clt_cnt }}</td>
                 <td v-show="keys.cart_byr_cnt">@{{ item.cart_byr_cnt }}</td>
                 <td v-show="keys.crt_byr_cnt">@{{ item.crt_byr_cnt }}</td>
-                <td v-show="keys.crt_rate">@{{ item.crt_rate }}</td>
+                <td v-show="keys.crt_rate">@{{ item.crt_rate }}%</td>
                 <td v-show="keys.pay_itm_cnt">@{{ item.pay_itm_cnt }}</td>
                 <td v-show="keys.pay_byr_cnt">@{{ item.pay_byr_cnt }}</td>
-                <td v-show="keys.pay_rate">@{{ item.pay_rate }}</td>
+                <td v-show="keys.pay_rate">@{{ item.pay_rate }}%</td>
             </tr>
         </table>
         <div>
@@ -178,9 +184,8 @@
 @section('js')
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
-<script src="{{asset('libs/echarts/echarts.js')}}"></script>
+<script src="https://cdn.bootcss.com/echarts/4.1.0/echarts.min.js"></script>
 <script>
-
     var log = console.log.bind(console);
 
     //loding组件
@@ -221,7 +226,7 @@
                 "crt_rate": "下单转化率",
                 "pay_itm_cnt": "支付件数",
                 "pay_byr_cnt": "命中笔数",
-                "pay_rate": "支付转化率"
+                "pay_rate": "支付转化率(%)"
             },
         },
         methods: {
@@ -327,18 +332,28 @@
                         console.log(error);
                     });
             },
-            updateMsg: function (id) {
+            updateMsg: function (e, id) {
+                let str_date = e.target.previousElementSibling.children[2].value;
+                let end_date = e.target.previousElementSibling.children[3].value;
+
+                if(!(str_date &&　end_date)){
+                    layer.msg('请填写完整');
+                    return false;
+                }
+
                 //开始loding
                 this.show = true;
                 axios.patch('/productanalys/' + id, {
-                        cookie: this.$refs.cookie.value
+                        'cookie': this.$refs.cookie.value,
+                        'str_time': str_date,
+                        'end_time': end_date
                     })
                     .then((response) => {
                         //结束loding
                         this.show = false;
                         switch (response.data) {
-                            case 'cookie': //cookie失效
-                                layer.msg('cookie失效请更新cookie');
+                            case 'required': //cookie失效
+                                layer.msg('没有填写cookie或时间');
                                 break;
                             case 'null':
                                 layer.alert('没有数据', {

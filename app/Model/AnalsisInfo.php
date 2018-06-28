@@ -32,5 +32,6 @@ class AnalsisInfo extends Model
     public function getUpdatedAtAttribute($value){
         return Carbon::parse($value)->toDateString();
     }
+ 
 
 }
