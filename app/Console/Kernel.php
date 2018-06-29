@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('send')->everyMinute();
-        $schedule->command('TmallCollectCount')->twiceDaily(1, 13);
+        $schedule->command('send')->everyFiveMinutes();
+        $schedule->command('TmallCollectCount')->daily();
     }
 
     /**
