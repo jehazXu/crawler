@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\AnalsisInfo;
-use App\Http\Resources\AnalsisInfoCollection;
-use App\Http\Resources\AnalsisInfoResource;
+use App\Model\ProductAnalysis;
+use Illuminate\Support\Facades\Validator;
 
 class AnalsisInfosController extends Controller
 {
@@ -14,8 +14,29 @@ class AnalsisInfosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required|date',
+        ]);
+
+        if ($validator->fails()) {
+            return 'date';
+        }
+
+        $date = $request->input('date');
+        $days = AnalsisInfo::where('day', $date)->with('productanalysis')->get(['id','product_analysis_id','keyword','uv','pay_byr_cnt','pay_rate']);
+        $days = $days->map(function($item){
+            return [
+               'skuid' => $item->productanalysis->skuid,
+               'name'  => $item->productanalysis->name,
+               'keyword'  => $item->keyword,
+               'uv'  => $item->uv,
+               'pay_byr_cnt'  => $item->pay_byr_cnt,
+               'pay_rate'  => $item->pay_rate,
+            ];
+        });
+        return $days->sortBy('skuid');
     }
 
     /**

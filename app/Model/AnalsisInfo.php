@@ -23,7 +23,7 @@ class AnalsisInfo extends Model
     protected $hidden = ['deleted_at'];
 
     public function productanalysis(){
-        return $this->belongsTo(\App\Model\ProductAnalysis::class);
+        return $this->belongsTo(\App\Model\ProductAnalysis::class,'product_analysis_id');
     }
 
     public function getCreatedAtAttribute($value){

@@ -23,10 +23,27 @@ class ProductAnalysisController extends Controller
      */
     public function index()
     {
-        $products = ProductAnalysis::paginate(6);;
+        //分析页
+        $products = ProductAnalysis::orderBy('id','desc')->paginate(6);;
         $cookie = \App\Model\Cookie::first()->value ?? '';
 
-        return view('analysis.show', compact('products', 'cookie'));
+        //汇总页
+        $list = AnalsisInfo::groupBy('day')->orderBy('day','desc')->pluck('day');
+        $date = AnalsisInfo::where('day','2018-06-28')->with('productanalysis')->get(['id','product_analysis_id','keyword','uv','pay_byr_cnt','pay_rate']);
+        $dates = $date->map(function($item){
+            return [
+               'skuid' => $item->productanalysis->skuid,
+               'name'  => $item->productanalysis->name,
+               'keyword'  => $item->keyword,
+               'uv'  => $item->uv,
+               'pay_byr_cnt'  => $item->pay_byr_cnt,
+               'pay_rate'  => $item->pay_rate,
+            ];
+        });
+
+        $dates = $dates->sortBy('skuid');
+
+        return view('analysis.show', compact('products', 'cookie', 'list', 'dates'));
     }
 
 
@@ -100,8 +117,8 @@ class ProductAnalysisController extends Controller
      */
     public function show($id)
     {
-        $time = AnalsisInfo::where('product_analysis_id', $id)->max('created_at');
-        return AnalsisInfo::where([['product_analysis_id', '=', $id], ['created_at', '=', $time], ])->get();
+        $dates = ProductAnalysis::findOrFail($id,['str_time', 'end_time']);
+        return AnalsisInfo::where('product_analysis_id', $id)->whereBetween('day', [$dates->str_time, $dates->end_time])->orderBy('day')->get();
     }
 
     /**
@@ -112,7 +129,7 @@ class ProductAnalysisController extends Controller
      */
     public function update(Request $request, $id)
     {
-
+       
         $cookie = $str_time = $end_time = '';
 
         $validator = Validator::make($request->all(), [
@@ -129,17 +146,12 @@ class ProductAnalysisController extends Controller
 
         $product = ProductAnalysis::findOrFail($id);
 
-        $str_day = Carbon::parse($str_time);
-        $dayNum = $str_day->diffInDays($end_time, false) + 1;
+        $days = $this->getDate($id, $str_time, $end_time);
 
-        //天数必须大于0
-        if ($dayNum <= 0) return 'day';
+        if ($days === 'day') return 'day';
 
         $message = [];
-
-        for ($i = 0; $i < $dayNum; $i++) {
-            $day = $str_day->addDay($i ? 1 : 0)->toDateString();
-
+        foreach($days as $day){
             $data = $this->getMessage($cookie, $id, $product->skuid, $day, $day);
 
             if ($data === -1) return 'cookie';
@@ -154,12 +166,10 @@ class ProductAnalysisController extends Controller
         DB::beginTransaction();
         try {
 
-            if ($product->analsisinfos()->delete() !== false &&
-                AnalsisInfo::insert($message) !== false &&
-                $product->update(['str_time' => $str_time, 'end_time' => $end_time]) !== false) {
+            if (AnalsisInfo::insert($message) !== false && $product->update(['str_time' => $str_time, 'end_time' => $end_time]) !== false) {
 
                 DB::commit();
-                return $message;
+                return $this->show($id);
             }
             DB::rollback();
             return 'fail';
@@ -168,6 +178,30 @@ class ProductAnalysisController extends Controller
             return 'fail';
         }
 
+    }
+
+    /**
+     * 计算要查询的日期
+     *
+     * @param [type] $id  产品id
+     * @param [type] $str_time 开始时间
+     * @param [type] $end_time 结束时间
+     * @return array | string
+     */
+    public function getDate($id, $str_time,$end_time){
+        $str_day = Carbon::parse($str_time);
+        //获得日期间隔的天数
+        $dayNum = $str_day->diffInDays($end_time, false) + 1;
+
+        //天数必须大于0
+        if ($dayNum <= 0) return 'day';
+
+        for ($i = 0; $i < $dayNum; $i++) {
+            $day[] = $str_day->addDay($i ? 1 : 0)->toDateString();
+        }
+
+        //计算数据没有的日期
+        return collect($day)->diff(AnalsisInfo::where('product_analysis_id',$id)->pluck('day'));
     }
 
     /**
