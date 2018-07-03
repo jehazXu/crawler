@@ -7,7 +7,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">天猫网址</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址【每天 1:00 和 13:00 从天猫获取一次数据】"/>
+          <input type="text" class="form-control" id="url" name="url" placeholder="输入天猫产品网址【每天 0:00 从天猫获取一次数据】"/>
         </div>
       </div>
       <div class="form-group">

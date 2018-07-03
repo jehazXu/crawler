@@ -1,5 +1,5 @@
-@extends('layouts.app') 
-@section('title', '产品分析') 
+@extends('layouts.app')
+@section('title', '产品分析')
 @section('css')
 <link rel="stylesheet" href="{{asset('css/loding.css')}}">
 <style>
@@ -37,7 +37,7 @@
     }
 </style>
 @endsection
- 
+
 @section('content')
 <loding-bar :show='show'></loding-bar>
 <ul id="myTab" class="nav nav-tabs">
@@ -215,7 +215,7 @@
     </div>
 </div>
 @endsection
- 
+
 @section('js')
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.js"></script>
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
@@ -292,7 +292,7 @@
                 }
 
                 id = this.getId(url);
-      
+
                 layer.prompt({
                     title: '请输入显示在列表中的名称',
                     formType: 2
@@ -487,7 +487,11 @@
                             },
                             series: [{
                                 data: list[key]['value'],
+                                color:'#83bff6',
                                 type: 'bar'
+                            },{
+                                data: list[key]['value'],
+                                type: 'line'
                             }]
                         };
 
@@ -508,7 +512,7 @@
                                 this.dates = response.data;
                             break;
                         }
-                        
+
                     })
                     .catch(function (error) {
                         console.log(error);
