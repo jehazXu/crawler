@@ -22,7 +22,6 @@
 @stop
 
 @section('js')
-    <script src="{{asset('js/jquery.idTabs.js')}}"></script>
     <script type="text/javascript">
 
         $(function(){
