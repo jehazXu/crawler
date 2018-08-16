@@ -16,7 +16,7 @@
       </div>
     <div class="form-group">
         <div class="control-label">
-            交易金额：<label class="result"></label>
+            交易金额：<label class="result" style="background: lightblue;padding: 5px;">0</label>
         </div>
     </div>
 @stop
@@ -28,7 +28,7 @@
         $(function(){
             $('#trin').bind('input porpertychange',function(){
                 let res = Math.pow($("#trin").val(),1.5984);
-                $('.result').text(res*0.0025);
+                $('.result').text(Math.round(res*0.0025));
             });
         })
     </script>
