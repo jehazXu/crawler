@@ -11,6 +11,9 @@ class JdController extends Controller
         return view('jds.show');
     }
 
+    public function trin(){
+        return view('trin.show');
+    }
     function crawler(Request $request){
         $sortType=$request->sorttype;
         $pid=$request->pid;
