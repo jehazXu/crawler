@@ -10,7 +10,7 @@
       <div class="form-group">
         <label class="control-label">交易指数:</label>
         <div style="width: 500px">
-          <input type="number" class="form-control" id="trin"  placeholder="输入交易指数"/>
+          <input type="number" class="form-control" id="trin"  placeholder="输入交易指数[数字]"/>
         </div>
 
       </div>
