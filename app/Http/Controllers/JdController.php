@@ -62,11 +62,11 @@ class JdController extends Controller
         // pageSize是每页最多的评论数（最大为10）
         if($isfolder){
             $url="https://club.jd.com/comment/getProductPageFoldComments.action?callback=jQuery7366544&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&_=1524212109913";
-            $content=self::curlGet($url);
+            $content=self::curlGet($url,$pid);
             $data=mb_substr($content,14,-2,'UTF-8');
         }else{
-            $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv474&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=1";
-            $content=self::curlGet($url);
+            $url="https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv482&productId=".$pid."&score=0&sortType=".$type."&page=".$page."&pageSize=10&isShadowSku=0&rid=0&fold=1";
+            $content=self::curlGet($url,$pid);
             $data=mb_substr($content,25,-2,'UTF-8');
         }
         //$cnt = file_get_contents($url);
@@ -75,12 +75,15 @@ class JdController extends Controller
         return $array;
     }
 
-    static function curlGet($url){
+    static function curlGet($url,$pid){
         $ch = curl_init();
         $timeout = 5;
         curl_setopt ($ch, CURLOPT_URL, $url);
         curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $referer = "https://item.jd.com/{$pid}.html";
+        //伪造来源referer
+        curl_setopt($ch, CURLOPT_REFERER, $referer);
         $cnt = curl_exec($ch);
         curl_close($ch);
         return mb_convert_encoding($cnt ,"UTF-8","GBK");
